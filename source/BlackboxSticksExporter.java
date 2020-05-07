@@ -36,7 +36,7 @@ public void setup(){
   
   num= new File(sketchPath()+"/LOGS").listFiles().length-1;
   surface.setResizable(true);
-  surface.setSize(500,(60*(num+1))+20);
+  surface.setSize(width,(60*(num+1))+20);
   xml = loadXML("settings.xml");
   XML[] children = xml.getChildren("setting");
   for(int i = 0; i< children.length;i++){
@@ -86,8 +86,17 @@ public void draw(){
     fill(255,0,0);
     rect(0,20+40*i,map((currrender[i]+1.0f)/PApplet.parseFloat(numframes[i]),0,1,0,150),20);
     textSize(15);
-    fill(0);
     textAlign(CENTER,CENTER);
+    stroke(255);
+    fill(50);
+    rect(500,40*i,88,40);
+    PImage img = loadImage(sketchPath()+"/tempImages/"+i+"/line_"+("0000000000"+(constrain(currrender[i]-5,0,999999999))).substring(((constrain(currrender[i]-5,0,999999999))+"").length())+".png");
+    if(img!=null){
+    image(img,500,40*i,88,40);
+    }
+    stroke(0);
+    fill(0);
+    
     rectMode(CENTER);
     text(constrain((int)(100*((currrender[i]+1.0f)/PApplet.parseFloat(numframes[i]))),0,100)+"%",75,28+40*i);
     textAlign(LEFT,TOP);
@@ -193,13 +202,9 @@ float space;
     alphaG.ellipse(map(-row.getInt(15),-500,500,w/2-w/30-w/3,w/2-w/30-w/3+w/3),map(-(int)map(row.getInt(16),1000,2000,-500,500),-500,500,0,w/3)+((w/3)/7.3f)/2,(w/3)/7.3f,(w/3)/7.3f);
     alphaG.ellipse(map(row.getInt(13),-500,500,w/2+w/30,w/2+w/30+w/3),map(-row.getInt(14),-500,500,0,w/3)+((w/3)/7.3f)/2,(w/3)/7.3f,(w/3)/7.3f);
     alphaG.endDraw();
-    String add="";
-    int adds= 10-(where+"").length();
-    for(int j = 0; j<adds;j++){
-      add= add+"0";
-    }
-
-    alphaG.save("tempImages/"+n+"/line_"+add+where+".png"); 
+    
+    
+    alphaG.save("tempImages/"+n+"/line_"+("0000000000"+where).substring((where+"").length())+".png"); 
  
   
    where++;
