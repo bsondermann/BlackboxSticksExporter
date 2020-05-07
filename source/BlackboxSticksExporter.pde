@@ -1,29 +1,4 @@
-import processing.core.*; 
-import processing.data.*; 
-import processing.event.*; 
-import processing.opengl.*; 
-
-import java.util.LinkedList; 
-import javax.swing.*; 
-import java.io.InputStreamReader; 
-
-import java.util.HashMap; 
-import java.util.ArrayList; 
-import java.io.File; 
-import java.io.BufferedReader; 
-import java.io.PrintWriter; 
-import java.io.InputStream; 
-import java.io.OutputStream; 
-import java.io.IOException; 
-
-public class BlackboxExporter extends PApplet {
-
-
-
-
-
-
-
+import java.io.InputStreamReader;
 
 int w = 500;
 int fps = 24;
@@ -38,8 +13,9 @@ boolean[]done;
 int[] currrender;
 int[] numframes;
 String[]names;
-public void setup(){
-  
+boolean exited=false;
+void setup(){
+  size(600,80);
   num= new File(sketchPath()+"/LOGS").listFiles().length-1;
   surface.setResizable(true);
   surface.setSize(500,(60*(num+1))+20);
@@ -70,28 +46,44 @@ public void setup(){
     }
   }
 }
-public void draw(){
+void draw(){
   background(0);
   textAlign(LEFT,TOP);
   textSize(20);
+  fill(255);
+  
+  stroke(0);
+  strokeWeight(2);
   for(int i = 0; i< rendering.length;i++){
+    textSize(20);
     if(rendering[i]||compiling[i]){
     if(rendering[i]){
-      text("rendering",0,60*i);
+      text("rendering",0,40*i);
     }
     if(compiling[i]){
-      text("compiling",0,60*i);
+      text("compiling",0,40*i);
     }
-    text(constrain((int)(100*((currrender[i]+1.0f)/PApplet.parseFloat(numframes[i]))),0,100)+"%",0,20+60*i);
+    rectMode(CORNER);
+    rect(0,20+40*i,150,20);
+    fill(255,0,0);
+    rect(0,20+40*i,map((currrender[i]+1.0)/float(numframes[i]),0,1,0,150),20);
+    textSize(15);
+    fill(0);
+    textAlign(CENTER,CENTER);
+    rectMode(CENTER);
+    text(constrain((int)(100*((currrender[i]+1.0)/float(numframes[i]))),0,100)+"%",75,28+40*i);
+    textAlign(LEFT,TOP);
+    fill(255);
   }
+  textSize(20);
   if(done[i]){
-    text("DONE!",0,40+60*i);
+    text("DONE!",0,0+40*i);
   }
-  text(names[i],150,60*i);
+  text(names[i],150,40*i);
   }
   text("Settings: FPS: "+fps+", WIDTH: "+w+", TAILLENGTH: "+tl,0,height-20);
 }
-public void calc(){
+void calc(){
   
   ellipseMode(CENTER);
   rectMode(CENTER);
@@ -104,7 +96,7 @@ public void calc(){
   PGraphics alphaG;
 float space;
   ProcessBuilder processBuilder;
-  alphaG = createGraphics(w,(int)(w/2.2f), JAVA2D);
+  alphaG = createGraphics(w,(int)(w/2.2), JAVA2D);
   table = loadTable(logs[n]+"","csv");
   int startindex=0;
   for(int i = 0; i< table.getRowCount();i++){
@@ -117,12 +109,15 @@ float space;
   }
   
   int lengthus=table.getRow(table.getRowCount()-1).getInt(1)-table.getRow(startindex).getInt(1);
-  numframes[n] = (int)((PApplet.parseFloat(lengthus)/1000000f)*fps);
+  numframes[n] = (int)((float(lengthus)/1000000f)*fps);
   rendering[n]=true;
   int lengthlist = table.getRowCount()-startindex;
-  space=PApplet.parseFloat(lengthlist)/numframes[n];
+  space=float(lengthlist)/numframes[n];
   int where=0;
   for(int i = startindex; i<table.getRowCount();i+=space){
+        if(exited){
+       return;   
+     }
     TableRow row = table.getRow(i);
 
       currrender[n]++;
@@ -132,18 +127,18 @@ float space;
     alphaG.stroke(0,0,0,255);
     alphaG.strokeWeight(w/400);
     //vert
-    alphaG.rect(w/2-w/30-w/6-w/400,    ((w/3)/7.3f)/2,              w/200,    w/3 );
-    alphaG.rect(w/2+w/30+w/6-w/400,    ((w/3)/7.3f)/2,              w/200,    w/3 );
+    alphaG.rect(w/2-w/30-w/6-w/400,    ((w/3)/7.3)/2,              w/200,    w/3 );
+    alphaG.rect(w/2+w/30+w/6-w/400,    ((w/3)/7.3)/2,              w/200,    w/3 );
     //hori
-    alphaG.rect(w/2-w/30-w/3,              w/6-w/400+((w/3)/7.3f)/2,        w/3,    w/200);
-    alphaG.rect(w/2+w/30,                      w/6-w/400+((w/3)/7.3f)/2,        w/3,    w/200);
+    alphaG.rect(w/2-w/30-w/3,              w/6-w/400+((w/3)/7.3)/2,        w/3,    w/200);
+    alphaG.rect(w/2+w/30,                      w/6-w/400+((w/3)/7.3)/2,        w/3,    w/200);
     
     //text
     alphaG.textSize(w/25);
     alphaG.textAlign(LEFT,CENTER);
-    alphaG.text((int)map(constrain(-(int)map(row.getInt(16),1000,2000,-500,500),-500,500),-500,500,2000,1000)+"",0,w/6-w/200+((w/3)/7.3f)/2);
+    alphaG.text((int)map(constrain(-(int)map(row.getInt(16),1000,2000,-500,500),-500,500),-500,500,2000,1000)+"",0,w/6-w/200+((w/3)/7.3)/2);
     alphaG.textAlign(RIGHT,CENTER);
-    alphaG.text(row.getInt(14)+"",w,w/6-w/200+((w/3)/7.3f)/2);
+    alphaG.text(row.getInt(14)+"",w,w/6-w/200+((w/3)/7.3)/2);
     alphaG.textAlign(CENTER,BOTTOM);
     alphaG.text(-row.getInt(15)+"",w/2-w/30-w/6-w/400,alphaG.height);
     alphaG.textAlign(CENTER,BOTTOM);
@@ -160,11 +155,11 @@ float space;
     for(int j = 0; j< space*taillength;j++){
       TableRow trailrow = table.getRow(constrain(i-j,0,table.getRowCount()-1));
           alphaG.fill(175,175,175,map(j,0,space*taillength,100,0));
-          float r = map(j,0,space*taillength,((w/3)/7.3f)/1.5f,((w/3)/7.3f)/10);
+          float r = map(j,0,space*taillength,((w/3)/7.3)/1.5,((w/3)/7.3)/10);
           float x =map(-trailrow.getInt(15),-500,500,w/2-w/30-w/3,w/2-w/30-w/3+w/3);
-          float y = map(-(int)map(trailrow.getInt(16),1000,2000,-500,500),-500,500,0,w/3)+((w/3)/7.3f)/2;
+          float y = map(-(int)map(trailrow.getInt(16),1000,2000,-500,500),-500,500,0,w/3)+((w/3)/7.3)/2;
           float x1= map(trailrow.getInt(13),-500,500,w/2+w/30,w/2+w/30+w/3);
-          float y1 = map(-trailrow.getInt(14),-500,500,0,w/3)+((w/3)/7.3f)/2;
+          float y1 = map(-trailrow.getInt(14),-500,500,0,w/3)+((w/3)/7.3)/2;
           if(x!=prevx&&y!=prevy){
             alphaG.ellipse(x,y,r,r);
             prevx=x;
@@ -177,15 +172,18 @@ float space;
         }
     }
         alphaG.fill(255,102,102,255);
-    alphaG.ellipse(map(-row.getInt(15),-500,500,w/2-w/30-w/3,w/2-w/30-w/3+w/3),map(-(int)map(row.getInt(16),1000,2000,-500,500),-500,500,0,w/3)+((w/3)/7.3f)/2,(w/3)/7.3f,(w/3)/7.3f);
-    alphaG.ellipse(map(row.getInt(13),-500,500,w/2+w/30,w/2+w/30+w/3),map(-row.getInt(14),-500,500,0,w/3)+((w/3)/7.3f)/2,(w/3)/7.3f,(w/3)/7.3f);
+    alphaG.ellipse(map(-row.getInt(15),-500,500,w/2-w/30-w/3,w/2-w/30-w/3+w/3),map(-(int)map(row.getInt(16),1000,2000,-500,500),-500,500,0,w/3)+((w/3)/7.3)/2,(w/3)/7.3,(w/3)/7.3);
+    alphaG.ellipse(map(row.getInt(13),-500,500,w/2+w/30,w/2+w/30+w/3),map(-row.getInt(14),-500,500,0,w/3)+((w/3)/7.3)/2,(w/3)/7.3,(w/3)/7.3);
     alphaG.endDraw();
     String add="";
     int adds= 10-(where+"").length();
     for(int j = 0; j<adds;j++){
       add= add+"0";
     }
+
     alphaG.save("tempImages/"+n+"/line_"+add+where+".png"); 
+ 
+  
    where++;
   }
  
@@ -219,13 +217,16 @@ float space;
   compiling[n]=false;
   done[n]=true;
 }
-  public void settings() {  size(600,80); }
-  static public void main(String[] passedArgs) {
-    String[] appletArgs = new String[] { "BlackboxExporter" };
-    if (passedArgs != null) {
-      PApplet.main(concat(appletArgs, passedArgs));
-    } else {
-      PApplet.main(appletArgs);
-    }
+
+void exit() {
+  exited=true;
+  delay(500);
+  for(int i = 0; i<val+1; i++){
+  File[] files= new File(sketchPath()+"/tempImages/"+i+"/").listFiles();
+  
+  for(File f:files){
+    f.delete();
   }
+  }
+  super.exit();
 }
