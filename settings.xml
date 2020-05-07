@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<settings>
+  <setting id="fps">60</setting>
+  <setting id="taillength">4</setting>   
+  <setting id="width">500</setting>
+</settings>
