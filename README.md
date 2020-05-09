@@ -8,3 +8,8 @@ Usage:
 3. open the settings.xml file with any editor and check the settings
 4. run the BlackboxSticksExporter.exe and wait until all the files are done.
 5. the exported videos are now located in the /OUTPUT directory.
+
+Features:
+- variable Framerate / Resolution / Tail length / Border (Shadow)
+- Batch export
+- mov with alpha

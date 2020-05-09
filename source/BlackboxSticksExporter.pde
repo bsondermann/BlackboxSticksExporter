@@ -6,6 +6,7 @@ float tl=50;
 XML xml;
 int val;
 int num;
+int borderThickness=0;
 boolean gotit=false;
 boolean[]rendering;
 boolean[]compiling;
@@ -25,6 +26,7 @@ void setup(){
     if(children[i].getString("id").equals("fps")){fps = Integer.parseInt(children[i].getContent());
     }else if(children[i].getString("id").equals("width")){w = Integer.parseInt(children[i].getContent());}
     else if(children[i].getString("id").equals("taillength")){tl = Float.parseFloat(children[i].getContent());
+  }else if(children[i].getString("id").equals("borderThickness")){borderThickness = Integer.parseInt(children[i].getContent());
   }
   }
   background(0);
@@ -103,6 +105,7 @@ void calc(){
   names[n]=logs[n].getName();
   Table table;
   PGraphics alphaG;
+
 float space;
   ProcessBuilder processBuilder;
   alphaG = createGraphics(w,(int)(w/2.2), JAVA2D);
@@ -145,13 +148,13 @@ float space;
     //text
     alphaG.textSize(w/25);
     alphaG.textAlign(LEFT,CENTER);
-    alphaG.text((int)map(constrain(-(int)map(row.getInt(16),1000,2000,-500,500),-500,500),-500,500,2000,1000)+"",0,w/6-w/200+((w/3)/7.3)/2);
+    alphaG.text((int)map(constrain(-(int)map(row.getInt(16),1000,2000,-500,500),-500,500),-500,500,2000,1000)+"",w/75,w/6-w/200+((w/3)/7.3)/2);
     alphaG.textAlign(RIGHT,CENTER);
-    alphaG.text(row.getInt(14)+"",w,w/6-w/200+((w/3)/7.3)/2);
+    alphaG.text(row.getInt(14)+"",w-w/75,w/6-w/200+((w/3)/7.3)/2);
     alphaG.textAlign(CENTER,BOTTOM);
-    alphaG.text(-row.getInt(15)+"",w/2-w/30-w/6-w/400,alphaG.height);
+    alphaG.text(-row.getInt(15)+"",w/2-w/30-w/6-w/400,alphaG.height-w/75);
     alphaG.textAlign(CENTER,BOTTOM);
-    alphaG.text(row.getInt(13)+"",w/2+w/30+w/6-w/400,alphaG.height);
+    alphaG.text(row.getInt(13)+"",w/2+w/30+w/6-w/400,alphaG.height-w/75);
     
 
     alphaG.noStroke();
@@ -183,10 +186,39 @@ float space;
         alphaG.fill(255,102,102,255);
     alphaG.ellipse(map(-row.getInt(15),-500,500,w/2-w/30-w/3,w/2-w/30-w/3+w/3),map(-(int)map(row.getInt(16),1000,2000,-500,500),-500,500,0,w/3)+((w/3)/7.3)/2,(w/3)/7.3,(w/3)/7.3);
     alphaG.ellipse(map(row.getInt(13),-500,500,w/2+w/30,w/2+w/30+w/3),map(-row.getInt(14),-500,500,0,w/3)+((w/3)/7.3)/2,(w/3)/7.3,(w/3)/7.3);
-    alphaG.endDraw();
+    alphaG.endDraw();   
+    if(borderThickness>0){
+    PImage border = createImage(alphaG.width,alphaG.height,ARGB);
+
+    border.loadPixels();
+    for(int j = 0; j<border.pixels.length;j++){
+      border.pixels[j]=0;
+      for(int x = -borderThickness;x<borderThickness;x++){
+        for(int y = -borderThickness;y<borderThickness;y++){
+          if(alpha(alphaG.pixels[constrain(x+(j%alphaG.width),0,alphaG.width-1)+constrain(y+(j/alphaG.width),0,alphaG.height-1)*alphaG.width])!=0){
+            border.pixels[j]=-16777216;
+          }
+        }
+      }
+     
+        
+    }
+    border.updatePixels();
     
+  PGraphics out = createGraphics(alphaG.width,alphaG.height,JAVA2D);
+    out.beginDraw();
+    out.clear();
+    out.image(border,-0.5,-0.5);
+    out.filter(BLUR,borderThickness/2);
     
-    alphaG.save("tempImages/"+n+"/line_"+("0000000000"+where).substring((where+"").length())+".png"); 
+    out.image(alphaG,0,0);
+    
+    out.endDraw();
+    out.save("tempImages/"+n+"/line_"+("0000000000"+where).substring((where+"").length())+".png"); 
+    }else{
+      alphaG.save("tempImages/"+n+"/line_"+("0000000000"+where).substring((where+"").length())+".png"); 
+    }
+
  
   
    where++;
