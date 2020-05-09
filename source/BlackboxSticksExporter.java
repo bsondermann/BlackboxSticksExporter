@@ -35,6 +35,8 @@ String[]names;
 boolean exited=false;
 public void setup(){
   
+  final PImage icon = loadImage("assets/icon.png");
+  surface.setIcon(icon);
   num= new File(sketchPath()+"/LOGS").listFiles().length-1;
   surface.setResizable(true);
   surface.setSize(width,(60*(num+1))+20);
@@ -250,7 +252,7 @@ float space;
   
   rendering[n]=false;
   compiling[n]=true;
-  processBuilder = new ProcessBuilder(sketchPath()+"/ffmpeg.exe","-r",fps+"","-i",sketchPath()+"/tempImages/"+n+"/line_%010d.png","-vcodec","prores_ks","-pix_fmt","yuva444p10le","-profile:v","4444","-q:v","30","-r",fps+"","-y",sketchPath()+"/OUTPUT/"+logs[n].getName().substring(0,logs[n].getName().length()-4)+".mov");
+  processBuilder = new ProcessBuilder(sketchPath()+"/assets/ffmpeg.exe","-r",fps+"","-i",sketchPath()+"/tempImages/"+n+"/line_%010d.png","-vcodec","prores_ks","-pix_fmt","yuva444p10le","-profile:v","4444","-q:v","30","-r",fps+"","-y",sketchPath()+"/OUTPUT/"+logs[n].getName().substring(0,logs[n].getName().length()-4)+".mov");
   try{
   Process process = processBuilder.start();
   InputStream is = process.getErrorStream();
@@ -271,6 +273,8 @@ float space;
   }
   compiling[n]=false;
   done[n]=true;
+
+
 }
 
 public void exit() {
@@ -282,7 +286,13 @@ public void exit() {
   for(File f:files){
     f.delete();
   }
+  new File(sketchPath()+"/tempImages/"+i+"/").delete();
   }
+  File f = new File(sketchPath()+"/tempImages/");
+  if(f!=null){
+  f.delete();
+  }
+  
   super.exit();
 }
   public void settings() {  size(600,80); }
