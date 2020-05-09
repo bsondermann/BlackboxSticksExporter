@@ -12,4 +12,4 @@ Usage:
 Features:
 - variable Framerate / Resolution / Tail length / Border (Shadow)
 - Batch export
-- mov with alpha
+- .mov with alpha
