@@ -1,6 +1,9 @@
 import java.io.InputStreamReader;
 
 int w = 500;
+int realw=500;
+int xoff=0;
+int yoff=0;
 int fps = 24;
 float tl=50;
 XML xml;
@@ -15,8 +18,14 @@ int[] currrender;
 int[] numframes;
 String[]names;
 boolean exited=false;
+color backgroundColor;
+int backgroundAlpha;
 void setup(){
   size(600,80);
+    createImage(1,1,RGB).save(sketchPath()+"/LOGS/temp.png");
+  createImage(1,1,RGB).save(sketchPath()+"/OUTPUT/temp.png");
+  new File(sketchPath()+"/OUTPUT/temp.png").delete();
+  new File(sketchPath()+"/LOGS/temp.png").delete();
   final PImage icon = loadImage("assets/icon.png");
   surface.setIcon(icon);
   num= new File(sketchPath()+"/LOGS").listFiles().length-1;
@@ -26,9 +35,13 @@ void setup(){
   XML[] children = xml.getChildren("setting");
   for(int i = 0; i< children.length;i++){
     if(children[i].getString("id").equals("fps")){fps = Integer.parseInt(children[i].getContent());
-    }else if(children[i].getString("id").equals("width")){w = Integer.parseInt(children[i].getContent());}
+    }else if(children[i].getString("id").equals("width")){realw = Integer.parseInt(children[i].getContent());w=(int)(realw*0.98);xoff=(realw-w)/2;yoff=(int)(realw/2-w/2.2)/2;}
     else if(children[i].getString("id").equals("taillength")){tl = Float.parseFloat(children[i].getContent());
   }else if(children[i].getString("id").equals("borderThickness")){borderThickness = Integer.parseInt(children[i].getContent());
+  }else if(children[i].getString("id").equals("backgroundColor")){
+    String s = children[i].getContent();
+    backgroundColor = color(Integer.parseInt(s.substring(1,3),16),Integer.parseInt(s.substring(3,5),16),Integer.parseInt(s.substring(5,7),16));
+  }else if(children[i].getString("id").equals("backgroundOpacity")){backgroundAlpha = Integer.parseInt(children[i].getContent());
   }
   }
   background(0);
@@ -110,7 +123,7 @@ void calc(){
 
 float space;
   ProcessBuilder processBuilder;
-  alphaG = createGraphics(w,(int)(w/2.2), JAVA2D);
+  alphaG = createGraphics(realw,(int)(realw/2), JAVA2D);
   table = loadTable(logs[n]+"","csv");
   int startindex=0;
   for(int i = 0; i< table.getRowCount();i++){
@@ -136,6 +149,7 @@ float space;
 
       currrender[n]++;
     alphaG.beginDraw();
+    alphaG.translate(xoff,yoff);
     alphaG.clear();
     alphaG.fill(255,255,255,255);
     alphaG.stroke(0,0,0,255);
@@ -154,9 +168,9 @@ float space;
     alphaG.textAlign(RIGHT,CENTER);
     alphaG.text(row.getInt(14)+"",w-w/75,w/6-w/200+((w/3)/7.3)/2);
     alphaG.textAlign(CENTER,BOTTOM);
-    alphaG.text(-row.getInt(15)+"",w/2-w/30-w/6-w/400,alphaG.height-w/75);
+    alphaG.text(-row.getInt(15)+"",w/2-w/30-w/6-w/400,(w/2.2)-w/75);
     alphaG.textAlign(CENTER,BOTTOM);
-    alphaG.text(row.getInt(13)+"",w/2+w/30+w/6-w/400,alphaG.height-w/75);
+    alphaG.text(row.getInt(13)+"",w/2+w/30+w/6-w/400,(w/2.2)-w/75);
     
 
     alphaG.noStroke();
@@ -188,10 +202,9 @@ float space;
         alphaG.fill(255,102,102,255);
     alphaG.ellipse(map(-row.getInt(15),-500,500,w/2-w/30-w/3,w/2-w/30-w/3+w/3),map(-(int)map(row.getInt(16),1000,2000,-500,500),-500,500,0,w/3)+((w/3)/7.3)/2,(w/3)/7.3,(w/3)/7.3);
     alphaG.ellipse(map(row.getInt(13),-500,500,w/2+w/30,w/2+w/30+w/3),map(-row.getInt(14),-500,500,0,w/3)+((w/3)/7.3)/2,(w/3)/7.3,(w/3)/7.3);
-    alphaG.endDraw();   
-    if(borderThickness>0){
+    alphaG.endDraw();
     PImage border = createImage(alphaG.width,alphaG.height,ARGB);
-
+    if(borderThickness>0){
     border.loadPixels();
     for(int j = 0; j<border.pixels.length;j++){
       border.pixels[j]=0;
@@ -206,20 +219,25 @@ float space;
         
     }
     border.updatePixels();
+    border.filter(BLUR,borderThickness/2);
+    }
     
   PGraphics out = createGraphics(alphaG.width,alphaG.height,JAVA2D);
     out.beginDraw();
     out.clear();
-    out.image(border,-0.5,-0.5);
-    out.filter(BLUR,borderThickness/2);
-    
+    if(backgroundAlpha>0){
+    out.background(backgroundColor,backgroundAlpha);
+
+    }
+    if(borderThickness>0){
+      
+      out.image(border,-0.5,-0.5);
+    }
     out.image(alphaG,0,0);
     
     out.endDraw();
     out.save("tempImages/"+n+"/line_"+("0000000000"+where).substring((where+"").length())+".png"); 
-    }else{
-      alphaG.save("tempImages/"+n+"/line_"+("0000000000"+where).substring((where+"").length())+".png"); 
-    }
+    
 
  
   
@@ -264,11 +282,14 @@ void exit() {
   delay(500);
   for(int i = 0; i<val+1; i++){
   File[] files= new File(sketchPath()+"/tempImages/"+i+"/").listFiles();
-  
+  if(files!=null){
   for(File f:files){
     f.delete();
+  }}
+  File f =new File(sketchPath()+"/tempImages/"+i+"/");
+  if(f!=null){
+  f.delete();
   }
-  new File(sketchPath()+"/tempImages/"+i+"/").delete();
   }
   File f = new File(sketchPath()+"/tempImages/");
   if(f!=null){

@@ -3,5 +3,7 @@
   <setting id="fps">60</setting>
   <setting id="taillength">4</setting>   
   <setting id="width">500</setting>
-  <setting id="borderThickness">5</setting>
+  <setting id="borderThickness">3</setting>
+  <setting id="backgroundColor">#333333</setting>
+  <setting id="backgroundOpacity">100</setting>
 </settings>
