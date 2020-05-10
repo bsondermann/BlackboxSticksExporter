@@ -10,7 +10,7 @@ Usage:
 5. the exported videos are now located in the /OUTPUT directory.
 
 Features:
-- variable Framerate / Resolution / Tail length / Border (Shadow)
+- variable Framerate / Resolution / Tail length / Border (Shadow) / Background
 - Batch export
 - .mov with alpha
 
