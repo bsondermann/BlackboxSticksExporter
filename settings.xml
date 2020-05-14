@@ -6,4 +6,5 @@
   <setting id="borderThickness">3</setting>
   <setting id="backgroundColor">#333333</setting>
   <setting id="backgroundOpacity">100</setting>
+  <setting id="sticksMode">2</setting>
 </settings>
