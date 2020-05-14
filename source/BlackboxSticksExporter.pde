@@ -296,16 +296,21 @@ void calc() {
       border.loadPixels();
       for (int j = 0; j<border.pixels.length; j++) {
         border.pixels[j]=0;
+        int m=9999;
         for (int x = -borderThickness; x<borderThickness; x++) {
-          for (int y = -borderThickness; y<borderThickness; y++) {
-            if (alpha(alphaG.pixels[constrain(x+(j%alphaG.width), 0, alphaG.width-1)+constrain(y+(j/alphaG.width), 0, alphaG.height-1)*alphaG.width])!=0) {
-              border.pixels[j]=-16777216;
+          if(m!=0){
+            for (int y = -borderThickness; y<borderThickness; y++) {
+              if(m!=0){
+                if(((alphaG.pixels[constrain(j+x+(y*alphaG.width),0,border.pixels.length-1)]>>24)&0xFF)!=0){
+                  m=(int)min(dist(0,0,x,y),m);
+                }
+              }
             }
           }
         }
+        border.pixels[j] = ((int)(map(m,borderThickness*1.415,0,0,255))<<24);
       }
       border.updatePixels();
-      border.filter(BLUR, borderThickness/2);
     }
 
     PGraphics out = createGraphics(alphaG.width, alphaG.height, JAVA2D);
@@ -316,7 +321,7 @@ void calc() {
     }
     if (borderThickness>0) {
 
-      out.image(border, -0.5, -0.5);
+      out.image(border, 0,0);
     }
     out.image(alphaG, 0, 0);
 
@@ -334,7 +339,7 @@ void calc() {
 
   rendering[n]=false;
   compiling[n]=true;
-  processBuilder = new ProcessBuilder(sketchPath()+"/assets/ffmpeg.exe", "-r", fps+"", "-i", sketchPath()+"/temp/Images/"+n+"/line_%010d.png", "-vcodec", "prores_ks", "-pix_fmt", "yuva444p10le", "-profile:v", "4444", "-q:v", "30", "-r", fps+"", "-y", sketchPath()+"/OUTPUT/"+logs[n].getName().substring(0, logs[n].getName().length()-4)+".mov");
+  processBuilder = new ProcessBuilder(sketchPath()+"/assets/ffmpeg.exe", "-r", fps+"", "-i", sketchPath()+"/temp/Images/"+n+"/line_%010d.png", "-vcodec", "prores_ks","-pix_fmt", "yuva444p10le", "-profile:v", "4444", "-q:v", "20", "-r", fps+"", "-y", sketchPath()+"/OUTPUT/"+logs[n].getName().substring(0, logs[n].getName().length()-4)+".mov");
   try {
     Process process = processBuilder.start();
     InputStream is = process.getErrorStream();
