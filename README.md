@@ -9,11 +9,11 @@ Usage:
 4. the exported videos are now located in the /OUTPUT directory.
 
 Features:
-- variable Framerate / Resolution / Tail length / Border (Shadow)
+- variable Framerate / Resolution / Tail length / Border (Shadow) / Background
 - Batch export
 - .mov with alpha
 
 Settings:
-"borderThickness": 0...5
-"backgroundColor": Color in Hex: #000000...#FFFFFF
-"backgroundOpacity": Opacity: 0...255 (0: 100% transparent, 255: 0% transparent)
+- "borderThickness": 0...5
+- "backgroundColor": Color in Hex: #000000...#FFFFFF
+- "backgroundOpacity": Opacity: 0...255 (0: 100% transparent, 255: 0% transparent)
