@@ -1,10 +1,14 @@
 import java.io.InputStreamReader;
+import http.requests.*;
 
 int w = 500;
 int realw=500;
 int xoff=0;
 int yoff=0;
 int fps = 24;
+float ver=1.8;
+boolean newerver;
+int numf=1;
 float tl=50;
 XML xml;
 int val;
@@ -26,6 +30,8 @@ color backgroundColor;
 int backgroundAlpha;
 void setup() {
   size(600, 80);
+  newerver = checkVersion();
+  if(!newerver){
   textSize(20);
   fill(255);
 
@@ -39,8 +45,12 @@ void setup() {
   thread("convertLogs");
   thread("loadLogs");
   thread("assignThreads");
+  }else{
+    text("newer version available",0,0);
+  }
 }
 void draw() {
+  
   background(0);
   textAlign(LEFT, TOP);
   textSize(20);
@@ -48,6 +58,8 @@ void draw() {
 
   stroke(0);
   strokeWeight(2);
+  if(!newerver){
+    if(numf!=0){
   if (!converted&&!loaded&&!assigned) {
     text("converting Logs", 0, 0);
   }
@@ -96,13 +108,17 @@ void draw() {
     textSize(12);
     text("Settings: FPS: "+fps+", WIDTH: "+realw+", TAILLENGTH: "+tl+", BORDER THICKNESS: "+borderThickness+", BGOPACITY: "+backgroundAlpha, 0, height-12);
   }
+  }else{text("no Files in /LOG!",0,0);}
+  }else{
+    text("new version available!",0,0);
+  }
 }
 
 
 
 
 void calc() {
-
+  if(numf!=0){
   ellipseMode(CENTER);
   rectMode(CENTER);
   int n=val;
@@ -362,6 +378,7 @@ void calc() {
   }
   compiling[n]=false;
   done[n]=true;
+  }
 }
 void clearTemp() {
   for (int i = 0; i<val+1; i++) {
@@ -412,7 +429,8 @@ void init() {
   surface.setIcon(icon);
 }
 void convertLogs() {
-  int numf = new File(sketchPath()+"/LOGS").listFiles().length;
+  numf = new File(sketchPath()+"/LOGS").listFiles().length;
+  if(numf!=0){
   ArrayList<String> args = new ArrayList<String>();
   args.add(sketchPath()+"/assets/blackbox_decode.exe");
   for (int i = 0; i<numf; i++) {
@@ -448,13 +466,15 @@ void convertLogs() {
   }
   catch(Exception e) {
     e.printStackTrace();
-  }
+  }}
   converted=true;
+  
 }
 void loadLogs() {
   while (!converted) {
     delay(1);
   }
+  if(numf!=0){
   num= new File(sketchPath()+"/temp/csv").listFiles().length-1;
   surface.setResizable(true);
   surface.setSize(width, (60*(num+1))+20);
@@ -488,12 +508,15 @@ void loadLogs() {
   currrender = new int[num+1];
   numframes = new int[num+1];
   names = new String[num+1];
+  }
   loaded=true;
+  
 }
 void assignThreads() {
   while (!loaded) {
     delay(1);
   }
+  if(numf!=0){
   val=0;
   int done=0;
   thread("calc");
@@ -505,5 +528,12 @@ void assignThreads() {
       done++;
     }
   }
+  }
   assigned=true;
+}
+boolean checkVersion(){
+  GetRequest get = new GetRequest("https://api.github.com/repos/bsondermann/BlackboxSticksExporter/releases/latest");
+  get.send();
+  if(Float.parseFloat(parseJSONObject(get.getContent()).getString("tag_name").trim().substring(1))>ver){return true;}
+  else{return false;}
 }

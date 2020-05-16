@@ -4,6 +4,7 @@ import processing.event.*;
 import processing.opengl.*; 
 
 import java.io.InputStreamReader; 
+import http.requests.*; 
 
 import java.util.HashMap; 
 import java.util.ArrayList; 
@@ -18,11 +19,15 @@ public class BlackboxSticksExporter extends PApplet {
 
 
 
+
 int w = 500;
 int realw=500;
 int xoff=0;
 int yoff=0;
 int fps = 24;
+float ver=1.8f;
+boolean newerver;
+int numf=1;
 float tl=50;
 XML xml;
 int val;
@@ -44,6 +49,8 @@ int backgroundColor;
 int backgroundAlpha;
 public void setup() {
   
+  newerver = checkVersion();
+  if(!newerver){
   textSize(20);
   fill(255);
 
@@ -57,8 +64,12 @@ public void setup() {
   thread("convertLogs");
   thread("loadLogs");
   thread("assignThreads");
+  }else{
+    text("newer version available",0,0);
+  }
 }
 public void draw() {
+  
   background(0);
   textAlign(LEFT, TOP);
   textSize(20);
@@ -66,6 +77,8 @@ public void draw() {
 
   stroke(0);
   strokeWeight(2);
+  if(!newerver){
+    if(numf!=0){
   if (!converted&&!loaded&&!assigned) {
     text("converting Logs", 0, 0);
   }
@@ -114,13 +127,17 @@ public void draw() {
     textSize(12);
     text("Settings: FPS: "+fps+", WIDTH: "+realw+", TAILLENGTH: "+tl+", BORDER THICKNESS: "+borderThickness+", BGOPACITY: "+backgroundAlpha, 0, height-12);
   }
+  }else{text("no Files in /LOG!",0,0);}
+  }else{
+    text("new version available!",0,0);
+  }
 }
 
 
 
 
 public void calc() {
-
+  if(numf!=0){
   ellipseMode(CENTER);
   rectMode(CENTER);
   int n=val;
@@ -380,6 +397,7 @@ public void calc() {
   }
   compiling[n]=false;
   done[n]=true;
+  }
 }
 public void clearTemp() {
   for (int i = 0; i<val+1; i++) {
@@ -430,7 +448,8 @@ public void init() {
   surface.setIcon(icon);
 }
 public void convertLogs() {
-  int numf = new File(sketchPath()+"/LOGS").listFiles().length;
+  numf = new File(sketchPath()+"/LOGS").listFiles().length;
+  if(numf!=0){
   ArrayList<String> args = new ArrayList<String>();
   args.add(sketchPath()+"/assets/blackbox_decode.exe");
   for (int i = 0; i<numf; i++) {
@@ -466,13 +485,15 @@ public void convertLogs() {
   }
   catch(Exception e) {
     e.printStackTrace();
-  }
+  }}
   converted=true;
+  
 }
 public void loadLogs() {
   while (!converted) {
     delay(1);
   }
+  if(numf!=0){
   num= new File(sketchPath()+"/temp/csv").listFiles().length-1;
   surface.setResizable(true);
   surface.setSize(width, (60*(num+1))+20);
@@ -506,12 +527,15 @@ public void loadLogs() {
   currrender = new int[num+1];
   numframes = new int[num+1];
   names = new String[num+1];
+  }
   loaded=true;
+  
 }
 public void assignThreads() {
   while (!loaded) {
     delay(1);
   }
+  if(numf!=0){
   val=0;
   int done=0;
   thread("calc");
@@ -523,7 +547,14 @@ public void assignThreads() {
       done++;
     }
   }
+  }
   assigned=true;
+}
+public boolean checkVersion(){
+  GetRequest get = new GetRequest("https://api.github.com/repos/bsondermann/BlackboxSticksExporter/releases/latest");
+  get.send();
+  if(Float.parseFloat(parseJSONObject(get.getContent()).getString("tag_name").trim().substring(1))>ver){return true;}
+  else{return false;}
 }
   public void settings() {  size(600, 80); }
   static public void main(String[] passedArgs) {
