@@ -477,7 +477,7 @@ void loadLogs() {
   if(numf!=0){
   num= new File(sketchPath()+"/temp/csv").listFiles().length-1;
   surface.setResizable(true);
-  surface.setSize(width, (60*(num+1))+20);
+  surface.setSize(width, (40*(num+1))+20);
   xml = loadXML("settings.xml");
   XML[] children = xml.getChildren("setting");
   for (int i = 0; i< children.length; i++) {
