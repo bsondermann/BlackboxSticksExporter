@@ -25,7 +25,7 @@ int realw=500;
 int xoff=0;
 int yoff=0;
 int fps = 24;
-float ver=1.9f;
+float ver=2.0f;
 boolean newerver;
 int numf=1;
 float tl=50;
