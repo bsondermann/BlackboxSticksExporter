@@ -18,3 +18,5 @@ Settings:
 - "borderThickness": 0...5
 - "backgroundColor": Color in Hex: #000000...#FFFFFF
 - "backgroundOpacity": Opacity: 0...255 (0: 100% transparent, 255: 0% transparent)
+
+<img src="images/01.png">
