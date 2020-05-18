@@ -15,8 +15,11 @@ Features:
 - .mov with alpha
 
 Settings:
-- "borderThickness": 0...5
+- "borderThickness": 0...100 (increases render time a lot)
 - "backgroundColor": Color in Hex: #000000...#FFFFFF
 - "backgroundOpacity": Opacity: 0...255 (0: 100% transparent, 255: 0% transparent)
+- "stickColor": Color in Hex: #000000...#FFFFFF (betaflight default: #FF6666)
+- "sticksModeVertPos": Vertical position of the mode in percent 0...100 (0: top, 100: bottom)
+
 
 <img src="images/01.png">

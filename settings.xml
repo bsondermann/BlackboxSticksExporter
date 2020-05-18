@@ -2,9 +2,11 @@
 <settings>
   <setting id="fps">60</setting>
   <setting id="taillength">4</setting>   
-  <setting id="width">200</setting>
-  <setting id="borderThickness">5</setting>
+  <setting id="width">500</setting>
+  <setting id="borderThickness">100</setting>
   <setting id="backgroundColor">#333333</setting>
   <setting id="backgroundOpacity">100</setting>
   <setting id="sticksMode">2</setting>
+  <setting id="sticksModeVertPos">75</setting>
+  <setting id="stickColor">#ff6666</setting>
 </settings>

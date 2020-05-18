@@ -6,7 +6,7 @@ int realw=500;
 int xoff=0;
 int yoff=0;
 int fps = 24;
-float ver=2.0;
+float ver=2.1;
 boolean newerver;
 int numf=1;
 float tl=50;
@@ -28,6 +28,8 @@ String[]names;
 boolean exited=false;
 color backgroundColor;
 int backgroundAlpha;
+color sticksColor;
+int modeVertPos=75;
 void setup() {
   size(600, 80);
   newerver = checkVersion();
@@ -103,7 +105,9 @@ void draw() {
       if (done[i]) {
         text("DONE!", 0, 0+40*i);
       }
-      text(names[i], 150, 40*i);
+      if(names[i]!=null){
+        text(names[i], 150, 40*i);
+      }
     }
     textSize(12);
     text("Settings: FPS: "+fps+", WIDTH: "+realw+", TAILLENGTH: "+tl+", BORDER THICKNESS: "+borderThickness+", BGOPACITY: "+backgroundAlpha, 0, height-12);
@@ -286,11 +290,11 @@ void calc() {
     alphaG.fill(255,255,255,255);
     alphaG.textAlign(CENTER,CENTER);
     if(mode==2||mode==4){
-    alphaG.text("Mode"+mode,w/2-w/30-w/6-w/400,w/4);
+    alphaG.text("Mode"+mode,w/2-w/30-w/6-w/400,map(modeVertPos,0,100,((w/3)/7.3)/2,(((w/3)/7.3)/2)+w/3));
     }else{
-    alphaG.text("Mode"+mode,w/2+w/30+w/6-w/400,w/4);
+    alphaG.text("Mode"+mode,w/2+w/30+w/6-w/400,map(modeVertPos,0,100,((w/3)/7.3)/2,(((w/3)/7.3)/2)+w/3));
     }
-    alphaG.fill(255, 102, 102, 255);
+    alphaG.fill(sticksColor, 255);
     if (mode==2) {
       alphaG.ellipse(map(-int(row.getString(15).trim()), -500, 500, w/2-w/30-w/3, w/2-w/30-w/3+w/3), map(-(int)map(int(row.getString(16).trim()), 1000, 2000, -500, 500), -500, 500, 0, w/3)+((w/3)/7.3)/2, (w/3)/7.3, (w/3)/7.3);
       alphaG.ellipse(map(int(row.getString(13).trim()), -500, 500, w/2+w/30, w/2+w/30+w/3), map(-int(row.getString(14).trim()), -500, 500, 0, w/3)+((w/3)/7.3)/2, (w/3)/7.3, (w/3)/7.3);
@@ -312,19 +316,19 @@ void calc() {
       border.loadPixels();
       for (int j = 0; j<border.pixels.length; j++) {
         border.pixels[j]=0;
-        int m=9999;
+        float m=9999;
         for (int x = -borderThickness; x<borderThickness; x++) {
           if(m!=0){
             for (int y = -borderThickness; y<borderThickness; y++) {
               if(m!=0){
                 if(((alphaG.pixels[constrain(j+x+(y*alphaG.width),0,border.pixels.length-1)]>>24)&0xFF)!=0){
-                  m=(int)min(dist(0,0,x,y),m);
+                  m=min(dist(0,0,x,y),m);
                 }
               }
             }
           }
         }
-        border.pixels[j] = ((int)(map(m,borderThickness*1.415,0,0,255))<<24);
+        border.pixels[j] = ((int)(map(constrain(m,0,float(borderThickness)*sqrt(2)),float(borderThickness)*sqrt(2),0,0,255))<<24);
       }
       border.updatePixels();
     }
@@ -491,7 +495,7 @@ void loadLogs() {
     } else if (children[i].getString("id").equals("taillength")) {
       tl = Float.parseFloat(children[i].getContent());
     } else if (children[i].getString("id").equals("borderThickness")) {
-      borderThickness = Integer.parseInt(children[i].getContent());
+      borderThickness= (int) map(Integer.parseInt(children[i].getContent()),0,100,0,w/40);
     } else if (children[i].getString("id").equals("backgroundColor")) {
       String s = children[i].getContent();
       backgroundColor = color(Integer.parseInt(s.substring(1, 3), 16), Integer.parseInt(s.substring(3, 5), 16), Integer.parseInt(s.substring(5, 7), 16));
@@ -499,6 +503,11 @@ void loadLogs() {
       backgroundAlpha = Integer.parseInt(children[i].getContent());
     } else if (children[i].getString("id").equals("sticksMode")) {
       mode = constrain(Integer.parseInt(children[i].getContent()), 1, 4);
+    }else if (children[i].getString("id").equals("stickColor")) {
+      String s = children[i].getContent();
+      sticksColor = color(Integer.parseInt(s.substring(1, 3), 16), Integer.parseInt(s.substring(3, 5), 16), Integer.parseInt(s.substring(5, 7), 16));
+    } else if (children[i].getString("id").equals("sticksModeVertPos")) {
+      modeVertPos = constrain(Integer.parseInt(children[i].getContent()), 0, 100);
     }
   }
 
@@ -532,8 +541,24 @@ void assignThreads() {
   assigned=true;
 }
 boolean checkVersion(){
-  GetRequest get = new GetRequest("https://api.github.com/repos/bsondermann/BlackboxSticksExporter/releases/latest");
-  get.send();
-  if(Float.parseFloat(parseJSONObject(get.getContent()).getString("tag_name").trim().substring(1))>ver){return true;}
-  else{return false;}
+  String[] p = loadStrings("assets/data.dat");
+  if(p==null){
+    saveStrings("assets/data.dat",new String[]{day()+""});
+    GetRequest get = new GetRequest("https://api.github.com/repos/bsondermann/BlackboxSticksExporter/releases/latest");
+    get.send();
+  
+    if(Float.parseFloat(parseJSONObject(get.getContent()).getString("tag_name").trim().substring(1))>ver){return true;}
+    else{return false;}
+  }else{
+    if(Integer.parseInt(p[0])!=day()){
+      
+      saveStrings("assets/data.dat",new String[]{day()+""});
+      GetRequest get = new GetRequest("https://api.github.com/repos/bsondermann/BlackboxSticksExporter/releases/latest");
+      get.send();
+  
+      if(Float.parseFloat(parseJSONObject(get.getContent()).getString("tag_name").trim().substring(1))>ver){return true;}
+      else{return false;}
+    }
+  }return false;
+  
 }
