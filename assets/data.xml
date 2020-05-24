@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assets>
+  <data/>
+  <data/>
+  <data>3.0</data>
+  <data></data>
+  <setting id="fps">60</setting>
+  <setting id="taillength">4</setting>
+  <setting id="width">540</setting>
+  <setting id="borderThickness">0</setting>
+  <setting id="backgroundColor">#333333</setting>
+  <setting id="backgroundOpacity">0</setting>
+  <setting id="sticksMode">2</setting>
+  <setting id="sticksModeVertPos">75</setting>
+  <setting id="stickColor">#ff6666</setting>
+  <setting id="simultaneousRenderers">1</setting>
+</assets>
