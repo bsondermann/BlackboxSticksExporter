@@ -21,3 +21,5 @@ Settings:
 - "backgroundOpacity": Opacity: 0...255 (0: 100% transparent, 255: 0% transparent)
 - "stickColor": Color in Hex: #000000...#FFFFFF (betaflight default: #FF6666)
 - "sticksModeVertPos": Vertical position of the mode in percent 0...100 (0: top, 100: bottom)
+
+<img src="images/01.png">
