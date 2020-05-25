@@ -8,6 +8,6 @@
   <setting id="BackgroundOpacity" type="num,0,100">0</setting>
   <setting id="SticksMode" type="num,1,4">2</setting>
   <setting id="SticksModeVertPos" type="num,0,100">75</setting>
-  <setting id="StickColor" type="col">#ff6666</setting>
-  <setting id="SimultaneousRenderers" type="num">1</setting>
+  <setting id="StickColor" type="col">#FF6666</setting>
+  <setting id="SimultaneousRenderers" type="num">4</setting>
 </settings>
