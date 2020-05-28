@@ -2,10 +2,10 @@
 <assets>
   <data></data>
   <data></data>
-  <data>3.1</data>
+  <data>3.2</data>
   <data></data>
   <setting id="fps">60</setting>
-  <setting id="taillength">4</setting>
+  <setting id="traillength">4</setting>
   <setting id="width">540</setting>
   <setting id="borderThickness">0</setting>
   <setting id="backgroundColor">#333333</setting>

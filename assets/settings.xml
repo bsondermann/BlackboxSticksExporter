@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <settings>
   <setting id="Fps" type="num,1">60</setting>
-  <setting id="Taillength" type="num">4</setting>
+  <setting id="Traillength" type="num">4</setting>
   <setting id="Width" type="num">540</setting>
   <setting id="BorderThickness" type="num,0,100">0</setting>
   <setting id="BackgroundColor" type="col">#333333</setting>
