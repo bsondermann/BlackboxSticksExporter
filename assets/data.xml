@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <assets>
-  <data></data>
-  <data></data>
-  <data>3.2</data>
-  <data></data>
+  <data/>
+  <data/>
+  <data>3.3</data>
+  <data>23</data>
   <setting id="fps">60</setting>
   <setting id="traillength">4</setting>
   <setting id="width">540</setting>
