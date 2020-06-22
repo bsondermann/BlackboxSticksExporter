@@ -2,8 +2,9 @@
 <assets>
   <data/>
   <data/>
-  <data>3.4</data>
-  <data>13</data>
+  <data>3.5</data>
+  <data></data>
+  <data>en</data>
   <setting id="fps">60</setting>
   <setting id="traillength">4</setting>
   <setting id="width">540</setting>
