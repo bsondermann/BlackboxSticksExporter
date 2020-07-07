@@ -1,5 +1,5 @@
 <lang>
-	<text id="newVersionAlert">Yay! New version Available!</text>
+	<text id="newVersionAlert">Yay! New version Available! Click to go to the releases.</text>
 	<text id="btnChangeSettings">Settings</text>
 	<text id="btnSelectInputFolder">Select Input Folder</text>
 	<text id="btnSelectOutputFolder">Select Output Folder</text>
@@ -8,10 +8,13 @@
 	<text id="btnBack">Back</text>
 	<text id="btnSave">Save</text>
 	<text id="btnLoadDefaults">Load Defaults</text>
+	<text id="btnLoadPreset">Load Preset</text>
+	<text id="btnSavePreset">Save Preset</text>
 	<text id="btnCredits">Credits</text>
 	<text id="checkBoxFinishSound">Finish Sound</text>
 	<text id="checkBoxShutdown">Shutdown</text>
 	<text id="checkBoxLogger">Logger</text>
+	<text id="checkBoxAutoFolder">Export to the input directory</text>
 	<text id="consoleErrorSelectInputFolder">Error: Select Input Folder!</text>
 	<text id="consoleErrorSelectOutputFolder">Error: Select Output Folder!</text>
 	<text id="consoleErrorSelectInputAndOutputFolder">Error: Select Input and Output Folder!</text>
@@ -25,7 +28,7 @@
 	<text id="selectInputFolder">Select Input Folder</text>
 	<text id="selectOutputFolder">Select Output Folder</text>
 	<text id="descFPS">Frames per Second of the final Video. Default: 60, Recommended: 30, 60, 120</text>
-	<text id="descTraillength">Traillength sets the length of the Trail behind the Stick</text>
+	<text id="descTraillength">Traillength sets the length of the Trail behind the Stick. Unit: Number of frames the trail goes back</text>
 	<text id="descWidth">Width determines the width of the final Video. The hight is automatically calculated with a ratio of 2:1</text>
 	<text id="descBorderThickness">BorderThickness sets the width of a 'Shadow' surrounding the contours (increases render time a lot). Values: 0 to 100</text>
 	<text id="descBackgroundColor">BackgroundColor sets the color of the entire background. Values: #000000 to #FFFFFF</text>

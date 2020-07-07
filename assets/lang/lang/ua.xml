@@ -1,5 +1,5 @@
 <lang>
-	<text id="newVersionAlert">Ура! Доступна нова версія!</text>
+	<text id="newVersionAlert">Ура! Доступна нова версія! Клацніть, щоб перейти до версій.</text>
 	<text id="btnChangeSettings">Налаштування</text>
 	<text id="btnSelectInputFolder">Вибрати Вхідну Папку</text>
 	<text id="btnSelectOutputFolder">Вибрати Вихідну Папку</text>
@@ -9,9 +9,12 @@
 	<text id="btnSave">Зберегти</text>
 	<text id="btnLoadDefaults">За замовчуванням</text>
 	<text id="btnCredits">Розробники</text>
+	<text id="btnLoadPreset">попередньо встановлений навантаження</text>
+	<text id="btnSavePreset">зберегти попередньо встановлений</text>
 	<text id="checkBoxFinishSound">Звук Закінчення</text>
 	<text id="checkBoxShutdown">Вимкнути</text>
 	<text id="checkBoxLogger">Logger</text>
+	<text id="checkBoxAutoFolder">експорт до каталогу вводу</text>
 	<text id="consoleErrorSelectInputFolder">Помилка: Вибрати Вхідну Папку!</text>
 	<text id="consoleErrorSelectOutputFolder">Помилка: Вибрати Вихідну Папку!</text>
 	<text id="consoleErrorSelectInputAndOutputFolder">Помилка: Вибрати Вхідну та Вихідну Папку!</text>

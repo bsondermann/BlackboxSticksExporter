@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <assets>
-  <data></data>
-  <data></data>
-  <data>4.01</data>
+  <data/>
+  <data/>
+  <data>4.1</data>
   <data></data>
   <data>en</data>
   <setting id="fps">60</setting>
-  <setting id="traillength">4</setting>
+  <setting id="traillength">30</setting>
   <setting id="width">540</setting>
   <setting id="borderThickness">0</setting>
   <setting id="backgroundColor">#333333</setting>

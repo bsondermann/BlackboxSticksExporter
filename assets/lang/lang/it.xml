@@ -1,5 +1,5 @@
 <lang>
-	<text id="newVersionAlert">Yay! Nuova versione disponibile!</text>
+	<text id="newVersionAlert">Yay! Nuova versione disponibile! Fai clic per andare alle versioni.</text>
 	<text id="btnChangeSettings">Impostazioni</text>
 	<text id="btnSelectInputFolder">Selezionare la cartella di input</text>
 	<text id="btnSelectOutputFolder">Selezionare la cartella di output</text>
@@ -9,9 +9,12 @@
 	<text id="btnSave">Salva</text>
 	<text id="btnLoadDefaults">Predefinito</text>
 	<text id="btnCredits">Crediti</text>
+	<text id="btnLoadPreset">Carica preimpostazione</text>
+	<text id="btnSavePreset">Salva preimpostazione</text>
 	<text id="checkBoxFinishSound">Suono di completamento</text>
 	<text id="checkBoxShutdown">Spegni PC al termine</text>
 	<text id="checkBoxLogger">Logger</text>
+	<text id="checkBoxAutoFolder">Esporta nella directory di input</text>
 	<text id="consoleErrorSelectInputFolder">Errore: Selezionare la cartella di input!</text>
 	<text id="consoleErrorSelectOutputFolder">Errore: Selezionare la cartella di output!</text>
 	<text id="consoleErrorSelectInputAndOutputFolder">Errore: Selezionare la cartella di input ed output!</text>

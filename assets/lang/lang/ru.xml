@@ -1,5 +1,5 @@
 <lang>
-	<text id="newVersionAlert">Ура! Доступна новая версия!</text>
+	<text id="newVersionAlert">Ура! Доступна новая версия! Нажмите, чтобы перейти к релизам.</text>
 	<text id="btnChangeSettings">Настройки</text>
 	<text id="btnSelectInputFolder">Выбрать Входную Папку</text>
 	<text id="btnSelectOutputFolder">Выбрать Исходную Папку</text>
@@ -9,9 +9,12 @@
 	<text id="btnSave">Сохранить</text>
 	<text id="btnLoadDefaults">По умолчанию</text>
 	<text id="btnCredits">Разработчики</text>
+	<text id="btnLoadPreset">загрузить пресет</text>
+	<text id="btnSavePreset">сохранить пресет</text>
 	<text id="checkBoxFinishSound">Звук Окончания</text>
 	<text id="checkBoxShutdown">Выключить</text>
 	<text id="checkBoxLogger">Logger</text>
+	<text id="checkBoxAutoFolder">экспорт в каталог ввода</text>
 	<text id="consoleErrorSelectInputFolder">Ошибка: Выбрать Входную Папку!</text>
 	<text id="consoleErrorSelectOutputFolder">Ошибка: Выбрать Исходную Папку!</text>
 	<text id="consoleErrorSelectInputAndOutputFolder">Ошибка: Выбрать Входную и Исходную Папку!</text>
