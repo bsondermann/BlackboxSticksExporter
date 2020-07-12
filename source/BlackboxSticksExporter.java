@@ -9,6 +9,8 @@ import processing.sound.*;
 import java.io.PrintStream; 
 import java.io.FileOutputStream; 
 import java.util.LinkedList; 
+import javax.imageio.ImageIO; 
+import java.awt.image.BufferedImage; 
 import drop.*; 
 import java.awt.Color; 
 import java.net.URL; 
@@ -37,6 +39,8 @@ import java.io.OutputStream;
 import java.io.IOException; 
 
 public class BlackboxSticksExporter extends PApplet {
+
+
 
 
 
@@ -2084,6 +2088,33 @@ public class IFTextField extends GUIComponent {
     }
   }
 }
+class ImageExporter extends Thread{
+  LinkedList<RenderImage> queue = new LinkedList<RenderImage>();
+  boolean done =false;
+  ImageExporter(){
+    this.start();
+  }
+  public void addImage(PImage image, String path){
+    queue.add(new RenderImage(image,path));
+  }
+  public @Override
+  void run(){
+    while(!done){
+      try{
+        
+          for(int i = 0; i< queue.size();i++){
+              queue.get(i).start();
+              queue.remove(i);
+          }
+          
+        Thread.sleep(10);
+      }catch(Exception e){
+      println("FEHLER IMAGEEXPORTER!");
+      e.printStackTrace();
+    }
+    }
+  }
+}
 class LangImage{
   PImage image;
   PVector pos;
@@ -2275,6 +2306,26 @@ class RamTableRow{
   }
   public String getString(int index){return content[index];}
 }
+class RenderImage extends Thread{
+  PImage image;
+  String path;
+  boolean done=false;
+  boolean started=false;
+  RenderImage(PImage image, String path){
+    this.image =image;
+    this.path= path;
+  }
+  public @Override
+  void run(){
+    started=true;
+    try{
+      File f = new File(sketchPath()+"/"+path);
+      f.getParentFile().mkdirs();
+      ImageIO.write((BufferedImage)image.getImage(),"png",f);
+    }catch(Exception e){println("FEHLER RENDERIMAGE!");}
+    done=true;
+  }
+}
 class RenderManager extends Thread{
   boolean rendering=false;
   File files[];
@@ -2369,12 +2420,14 @@ class Renderer extends Thread{
   int bgColor,sticksColor;
   PImage prevImage;
   int starttime=0;
+  ImageExporter ie;
   Renderer(File f,String[]s,int number){
     currentState="Idle";
     this.number= number;
     settings = s;
     file = f;
     parseSettings();
+    
   }
   public void convertLog(){
     
@@ -2765,8 +2818,8 @@ class Renderer extends Thread{
     out.image(alphaG,vidWidth*scl*2,vidWidth*scl,vidWidth - vidWidth*scl*4,vidWidth/2 - vidWidth*scl*2);
 
     out.endDraw();
-    out.save("temp/"+number+"/"+sublog+"/Images/line_"+("0000000000"+where).substring((where+"").length())+".png"); 
-
+    
+    ie.addImage(out,"temp/"+number+"/"+sublog+"/Images/line_"+("0000000000"+where).substring((where+"").length())+".png");
     prevImage = out;
     where++;
     row = null;
@@ -2783,8 +2836,15 @@ class Renderer extends Thread{
     BufferedReader reader = new BufferedReader(new InputStreamReader(is));
     String line = reader.readLine();
     while (line !=null) {
-      if (line.contains("frame")) {
-        currentFrame=Integer.parseInt(line.substring(7, 13).replaceAll("[\\D]", ""));
+      if (line.contains("frame")&&line.charAt(0)=='f') {
+        String s = line+"";
+        s = s.replaceAll("[A-Z,a-z,=]","");
+        String []split = s.split(" ");
+        String out="";
+        for(int i = 0; i<split.length; i++){
+          if(out.equals("")){out=split[i];}
+        }        
+        currentFrame=Integer.parseInt(out);
       }
       println(line);
       line= reader.readLine();
@@ -2819,7 +2879,11 @@ class Renderer extends Thread{
         for(int i = 0; i< logs.length; i++){
           starttime=millis();
           file = logs[i];
+          ie = new ImageExporter();
           renderLog(i);
+          while(ie.queue.size()>0){
+          try{Thread.sleep(10);}catch(Exception e){}}
+          ie.done=true;
           starttime=millis();
           compileLog(i);
         }
@@ -3371,7 +3435,6 @@ lang.getTranslation("descSimultaneousRenderers")
       fields[i].setValue( children[i].getContent());
       fields[i].addActionListener(applet);
       c.add(fields[i]);
-      //labels[i].setLabel(children[i].getString("id").trim());
     }
   }
   public void writeXML(){
@@ -3456,7 +3519,6 @@ lang.getTranslation("descSimultaneousRenderers")
       fields[i].setValue( children[i].getContent());
       fields[i].addActionListener(applet);
       c.add(fields[i]);
-      //labels[i].setLabel(children[i].getString("id").trim());
     }
     }
   }

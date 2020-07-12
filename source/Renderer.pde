@@ -12,12 +12,14 @@ class Renderer extends Thread{
   color bgColor,sticksColor;
   PImage prevImage;
   int starttime=0;
+  ImageExporter ie;
   Renderer(File f,String[]s,int number){
     currentState="Idle";
     this.number= number;
     settings = s;
     file = f;
     parseSettings();
+    
   }
   void convertLog(){
     
@@ -408,8 +410,8 @@ class Renderer extends Thread{
     out.image(alphaG,vidWidth*scl*2,vidWidth*scl,vidWidth - vidWidth*scl*4,vidWidth/2 - vidWidth*scl*2);
 
     out.endDraw();
-    out.save("temp/"+number+"/"+sublog+"/Images/line_"+("0000000000"+where).substring((where+"").length())+".png"); 
-
+    
+    ie.addImage(out,"temp/"+number+"/"+sublog+"/Images/line_"+("0000000000"+where).substring((where+"").length())+".png");
     prevImage = out;
     where++;
     row = null;
@@ -426,8 +428,15 @@ class Renderer extends Thread{
     BufferedReader reader = new BufferedReader(new InputStreamReader(is));
     String line = reader.readLine();
     while (line !=null) {
-      if (line.contains("frame")) {
-        currentFrame=Integer.parseInt(line.substring(7, 13).replaceAll("[\\D]", ""));
+      if (line.contains("frame")&&line.charAt(0)=='f') {
+        String s = line+"";
+        s = s.replaceAll("[A-Z,a-z,=]","");
+        String []split = s.split(" ");
+        String out="";
+        for(int i = 0; i<split.length; i++){
+          if(out.equals("")){out=split[i];}
+        }        
+        currentFrame=Integer.parseInt(out);
       }
       println(line);
       line= reader.readLine();
@@ -462,7 +471,11 @@ class Renderer extends Thread{
         for(int i = 0; i< logs.length; i++){
           starttime=millis();
           file = logs[i];
+          ie = new ImageExporter();
           renderLog(i);
+          while(ie.queue.size()>0){
+          try{Thread.sleep(10);}catch(Exception e){}}
+          ie.done=true;
           starttime=millis();
           compileLog(i);
         }

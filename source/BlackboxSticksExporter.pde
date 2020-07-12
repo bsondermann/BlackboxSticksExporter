@@ -4,6 +4,8 @@ import processing.sound.*;
 import java.io.PrintStream;
 import java.io.FileOutputStream;
 import java.util.LinkedList;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import drop.*;
 Selection s;
 File inputPath,outputPath;
