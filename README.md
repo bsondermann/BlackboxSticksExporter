@@ -15,3 +15,4 @@ Features:
 - automatic shutdown / sound notification when finished
 
 
+[![Youtube Preview](https://img.youtube.com/vi/xw3L4PuEaqs/0.jpg)](https://www.youtube.com/watch?v=xw3L4PuEaqs)
