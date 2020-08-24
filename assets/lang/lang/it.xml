@@ -30,7 +30,10 @@
 	<text id="descFPS">Frames al Secondo del video esportato. Predefinito: 60, Consigliato: 30, 60, 120</text>
 	<text id="descTraillength">Traillength regola la lunghezza della scia lasciata dagli Sticks</text>
 	<text id="descWidth">Width determina la larghezza (lato orizzontale) del video finale. L'altezza è calcolata automaticamente con un rapporto di 2:1</text>
-	<text id="descBorderThickness">BorderThickness regola lo spessore dell'ombra attorno ai contorni (aumenta di molto il tempo di rendering). Valori: 0 a 100</text>
+	<text id="descBorderThickness">BorderThickness regola lo spessore dell'ombra attorno ai contorni. Valori: 0 a 100</text>
+	<text id="descBorderAngle">BorderAngle imposta l'angolo della sorgente luminosa che proietta l'ombra. Valori: da 0 a 360</text>
+	<text id="descBorderDistance">BorderDistance imposta la distanza dai bastoncini all'ombra. Valori: da 0 a 100</text>
+	<text id="descBorderBlur">BorderBlur imposta la quantità di sfocatura applicata all'ombra (aumenta notevolmente il tempo di rendering). Valori: da 0 a 100</text>
 	<text id="descBackgroundColor">BackgroundColor regola i colori dello sfondo. Valori: #000000 a #FFFFFF</text>
 	<text id="descBackgroundOpacity">BackgroundOpacity regola il livello di trasparenza dello sfondo. Valori: 0 (100% transparenza) a 100 (0% transparenza)</text>
 	<text id="descSticksMode">SticksMode controlla la modalità degli sticks del video finale. Valori: 1 a 4</text>

@@ -5,11 +5,11 @@ class Credits{
   GUIController cont;
   IFButton backbtn;
   boolean active = false;
-  PImage icomail,icoinsta,icoyt;
+  PImage icomail,icoinsta,icoyt,icopp;
   PApplet app;
   String[][] data={
     {"Name","Job","Role"},
-  {"Bastian Sondermann","Developer","Developing / Testing / German translation","http://www.instagram.com/bsondermann581/","bastian.sondermann@web.de"},
+  {"Bastian Sondermann","Developer","Developing / Testing / German translation","http://www.instagram.com/batifpv/","bastian.sondermann@web.de"},
   {"Fabio Pansera","Video Editor","Testing / Italian, Ukrainian, Russian translation","http://www.instagram.com/thelollerz/","fabiopanseratcb@gmail.com"},
   {"Joshua Bardwell","FPV Know-It-All","Testing","http://www.youtube.com/joshuabardwell","joshuabardwell@gmail.com"}
   };
@@ -21,7 +21,7 @@ class Credits{
     icomail = loadImage(sketchPath()+"/assets/email.png");
     icoinsta = loadImage(sketchPath()+"/assets/ig.png");
     icoyt = loadImage(sketchPath()+"/assets/yt.png");
-    
+    icopp=loadImage(sketchPath()+"/assets/pp.png");
   }
   void show(){
     if(this.active){
@@ -48,6 +48,8 @@ class Credits{
             image(icomail,730,76+30*i);}
            }
         }
+        
+      image(icopp,670,73+30);
       }
       if(cont != null){cont.show();}
     }
@@ -68,7 +70,13 @@ class Credits{
         }catch(Exception e){e.printStackTrace();}
         sele.console = data[i][4];
       }
-    }}
+    }
+    if(mouseX>670&&mouseX<670+25&&mouseY>73+30&&mouseY<73+30+25){
+      try{
+          Desktop.getDesktop().browse(new URL("https://www.paypal.me/bsondermann581").toURI());
+        }catch(Exception e){e.printStackTrace();}
+    }
+  }
   }
    void actionPerformed(GUIEvent e){
     if(this.active){

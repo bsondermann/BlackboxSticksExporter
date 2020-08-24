@@ -2,13 +2,16 @@
 <assets>
   <data/>
   <data/>
-  <data>4.2</data>
+  <data>4.3</data>
   <data></data>
   <data>en</data>
-  <setting id="fps">60</setting>
-  <setting id="traillength">30</setting>
+  <setting id="fps">25</setting>
+  <setting id="traillength">15</setting>
   <setting id="width">540</setting>
-  <setting id="borderThickness">0</setting>
+  <setting id="borderThickness">15</setting>
+  <setting id="borderAngle">45</setting>
+  <setting id="borderDistance">0</setting>
+  <setting id="borderBlur">0</setting>
   <setting id="backgroundColor">#333333</setting>
   <setting id="backgroundOpacity">0</setting>
   <setting id="sticksMode">2</setting>

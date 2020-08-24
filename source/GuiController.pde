@@ -139,7 +139,6 @@ public class GUIController extends GUIComponent implements ClipboardOwner {
 
 
   public void lostOwnership (Clipboard parClipboard, Transferable parTransferable) {
-    // System.out.println ("Lost ownership");
   }
   
   public void copy(String v)

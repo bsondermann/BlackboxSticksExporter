@@ -30,7 +30,10 @@
 	<text id="descFPS">Bilder pro Sekunde vom Video. Standard: 60, Empfohlen: 30, 60, 120</text>
 	<text id="descTraillength">Traillength bestimmt die Schweiflänge hinter den Sticks. Einheit: Anzahl der Bildern, die der Schweif zurück geht</text>
 	<text id="descWidth">Width bestimmt die Breite des Videos. Die höhe wird automatisch mit einem Seitenverhältnis von 2:1 errechnet</text>
-	<text id="descBorderThickness">BorderThickness bestimmt die Dicke eines "Schattens" welche die Konturen umgibt (dies verlängert die Renderzeit!). Werte: 0 bis 100</text>
+	<text id="descBorderThickness">BorderThickness bestimmt die Dicke eines "Schattens" welche die Konturen umgibt. Werte: 0 bis 100</text>
+	<text id="descBorderAngle">BorderAngle bestimmt den Winkel des einfallenden Lichtes. Werte: 0 bis 360</text>
+	<text id="descBorderDistance">BorderDistance bestimmt den Abstand zwischen Sticks und Schatten. Werte: 0 bis 100</text>
+	<text id="descBorderBlur">BorderBlur bestimmt die Unschärfe des Schattens (dies verlängert die Renderzeit!). Werte: 0 bis 100</text>
 	<text id="descBackgroundColor">BackgroundColor bestimmt die Farbe des Hintergrunds. Werte: #000000 bis #FFFFFF</text>
 	<text id="descBackgroundOpacity">BackgroundOpacity bestimmt die Deckkraft des Hintergrunds. Werte: 0 (100% transparent) bis 100 (0% transparent)</text>
 	<text id="descSticksMode">SticksMode bestimmt den Stick Mode. Werte: 1 bis 4</text>

@@ -385,11 +385,11 @@ class Credits{
   GUIController cont;
   IFButton backbtn;
   boolean active = false;
-  PImage icomail,icoinsta,icoyt;
+  PImage icomail,icoinsta,icoyt,icopp;
   PApplet app;
   String[][] data={
     {"Name","Job","Role"},
-  {"Bastian Sondermann","Developer","Developing / Testing / German translation","http://www.instagram.com/bsondermann581/","bastian.sondermann@web.de"},
+  {"Bastian Sondermann","Developer","Developing / Testing / German translation","http://www.instagram.com/batifpv/","bastian.sondermann@web.de"},
   {"Fabio Pansera","Video Editor","Testing / Italian, Ukrainian, Russian translation","http://www.instagram.com/thelollerz/","fabiopanseratcb@gmail.com"},
   {"Joshua Bardwell","FPV Know-It-All","Testing","http://www.youtube.com/joshuabardwell","joshuabardwell@gmail.com"}
   };
@@ -401,7 +401,7 @@ class Credits{
     icomail = loadImage(sketchPath()+"/assets/email.png");
     icoinsta = loadImage(sketchPath()+"/assets/ig.png");
     icoyt = loadImage(sketchPath()+"/assets/yt.png");
-    
+    icopp=loadImage(sketchPath()+"/assets/pp.png");
   }
   public void show(){
     if(this.active){
@@ -428,6 +428,8 @@ class Credits{
             image(icomail,730,76+30*i);}
            }
         }
+        
+      image(icopp,670,73+30);
       }
       if(cont != null){cont.show();}
     }
@@ -448,7 +450,13 @@ class Credits{
         }catch(Exception e){e.printStackTrace();}
         sele.console = data[i][4];
       }
-    }}
+    }
+    if(mouseX>670&&mouseX<670+25&&mouseY>73+30&&mouseY<73+30+25){
+      try{
+          Desktop.getDesktop().browse(new URL("https://www.paypal.me/bsondermann581").toURI());
+        }catch(Exception e){e.printStackTrace();}
+    }
+  }
   }
    public void actionPerformed(GUIEvent e){
     if(this.active){
@@ -807,7 +815,6 @@ public class GUIController extends GUIComponent implements ClipboardOwner {
 
 
   public void lostOwnership (Clipboard parClipboard, Transferable parTransferable) {
-    // System.out.println ("Lost ownership");
   }
   
   public void copy(String v)
@@ -2109,7 +2116,6 @@ class ImageExporter extends Thread{
           
         Thread.sleep(10);
       }catch(Exception e){
-      println("FEHLER IMAGEEXPORTER!");
       e.printStackTrace();
     }
     }
@@ -2322,7 +2328,7 @@ class RenderImage extends Thread{
       File f = new File(sketchPath()+"/"+path);
       f.getParentFile().mkdirs();
       ImageIO.write((BufferedImage)image.getImage(),"png",f);
-    }catch(Exception e){println("FEHLER RENDERIMAGE!");}
+    }catch(Exception e){e.printStackTrace();}
     done=true;
   }
 }
@@ -2337,7 +2343,7 @@ class RenderManager extends Thread{
   Selection s;
   RenderManager(File[] f,String[]set,Selection s){
     this.s=s;
-    simultRenderNum=Integer.parseInt(set[9]);
+    simultRenderNum=Integer.parseInt(set[12]);
     renderSettings=set;
     filterFiles(f);
     initRenderers();
@@ -2415,7 +2421,8 @@ class Renderer extends Thread{
   String[]settings;
   String currentState="";
   int number;
-  int tailLength,vidWidth,borderThickness,bgOpacity,sticksMode,sticksModeVertPos;
+  int tailLength,vidWidth,bgOpacity,sticksMode,sticksModeVertPos,borderAngle,borderDistance,borderBlur;
+  float borderThickness;
   float fps;
   int bgColor,sticksColor;
   PImage prevImage;
@@ -2811,9 +2818,10 @@ class Renderer extends Thread{
     }
     float scl= 0.01f;
     if (borderThickness>0) {
-      
-      out.image(border, vidWidth*scl*2,vidWidth*scl,vidWidth - vidWidth*scl*4,vidWidth/2 - vidWidth*scl*2);
-      out.filter(BLUR,borderThickness/3);
+      PVector v = PVector.fromAngle(radians(borderAngle));
+      v.setMag(borderDistance);
+      out.image(border, vidWidth*scl*2+v.x,vidWidth*scl+v.y,vidWidth - vidWidth*scl*4,vidWidth/2 - vidWidth*scl*2);
+      out.filter(BLUR,(PApplet.parseFloat(borderBlur)/100)*((vidWidth/75.0f)/3));
     }
     out.image(alphaG,vidWidth*scl*2,vidWidth*scl,vidWidth - vidWidth*scl*4,vidWidth/2 - vidWidth*scl*2);
 
@@ -2861,12 +2869,15 @@ class Renderer extends Thread{
     fps=Float.parseFloat(settings[0]);
     tailLength=Integer.parseInt(settings[1]);
     vidWidth=Integer.parseInt(settings[2]);
-    borderThickness=(int)map(Integer.parseInt(settings[3]),0,100,0,(vidWidth/75.0f));
-    bgOpacity=Integer.parseInt(settings[5]);
-    sticksMode=Integer.parseInt(settings[6]);
-    sticksModeVertPos=Integer.parseInt(settings[7]);
-    bgColor = color(Integer.parseInt(settings[4].substring(1, 3), 16), Integer.parseInt(settings[4].substring(3, 5), 16), Integer.parseInt(settings[4].substring(5, 7), 16));
-    sticksColor = color(Integer.parseInt(settings[8].substring(1, 3), 16), Integer.parseInt(settings[8].substring(3, 5), 16), Integer.parseInt(settings[8].substring(5, 7), 16));
+    borderThickness=map(Integer.parseInt(settings[3]),0,100,0,(vidWidth/75.0f));
+    borderAngle=Integer.parseInt(settings[4]);
+    borderDistance=(int)map(Integer.parseInt(settings[5]),0,100,0,vidWidth/40);
+    borderBlur=Integer.parseInt(settings[6]);
+    bgOpacity=Integer.parseInt(settings[8]);
+    sticksMode=Integer.parseInt(settings[9]);
+    sticksModeVertPos=Integer.parseInt(settings[10]);
+    bgColor = color(Integer.parseInt(settings[7].substring(1, 3), 16), Integer.parseInt(settings[7].substring(3, 5), 16), Integer.parseInt(settings[7].substring(5, 7), 16));
+    sticksColor = color(Integer.parseInt(settings[11].substring(1, 3), 16), Integer.parseInt(settings[11].substring(3, 5), 16), Integer.parseInt(settings[11].substring(5, 7), 16));
     
   }
   public @Override void run(){
@@ -3212,6 +3223,9 @@ class Settings{
 lang.getTranslation("descTraillength"),
 lang.getTranslation("descWidth"),
 lang.getTranslation("descBorderThickness"),
+lang.getTranslation("descBorderAngle"),
+lang.getTranslation("descBorderDistance"),
+lang.getTranslation("descBorderBlur"),
 lang.getTranslation("descBackgroundColor"),
 lang.getTranslation("descBackgroundOpacity"),
 lang.getTranslation("descSticksMode"),
@@ -3373,16 +3387,16 @@ lang.getTranslation("descSimultaneousRenderers")
     back = new IFButton(lang.getTranslation("btnBack"),50,30,100,20);
     back.addActionListener(applet);
     if(lang.name.equals("ua")){
-      savePreset = new IFButton(lang.getTranslation("btnSavePreset"),50,400,150,40);
+      savePreset = new IFButton(lang.getTranslation("btnSavePreset"),50,500,150,40);
       savePreset.addActionListener(applet);
     
-      loadPreset = new IFButton(lang.getTranslation("btnLoadPreset"),width-200,400,150,40);
+      loadPreset = new IFButton(lang.getTranslation("btnLoadPreset"),width-200,500,150,40);
       loadPreset.addActionListener(applet);
     }else{   
-      savePreset = new IFButton(lang.getTranslation("btnSavePreset"),50,400,150,20);
+      savePreset = new IFButton(lang.getTranslation("btnSavePreset"),50,500,150,20);
       savePreset.addActionListener(applet);
     
-      loadPreset = new IFButton(lang.getTranslation("btnLoadPreset"),width-200,400,150,20);
+      loadPreset = new IFButton(lang.getTranslation("btnLoadPreset"),width-200,500,150,20);
       loadPreset.addActionListener(applet);
     }   
     save = new IFButton(lang.getTranslation("btnSave"),width-150,30,100,20);
@@ -3435,6 +3449,7 @@ lang.getTranslation("descSimultaneousRenderers")
       fields[i].setValue( children[i].getContent());
       fields[i].addActionListener(applet);
       c.add(fields[i]);
+      //labels[i].setLabel(children[i].getString("id").trim());
     }
   }
   public void writeXML(){
@@ -3519,6 +3534,7 @@ lang.getTranslation("descSimultaneousRenderers")
       fields[i].setValue( children[i].getContent());
       fields[i].addActionListener(applet);
       c.add(fields[i]);
+      //labels[i].setLabel(children[i].getString("id").trim());
     }
     }
   }

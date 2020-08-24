@@ -8,6 +8,9 @@ class Settings{
 lang.getTranslation("descTraillength"),
 lang.getTranslation("descWidth"),
 lang.getTranslation("descBorderThickness"),
+lang.getTranslation("descBorderAngle"),
+lang.getTranslation("descBorderDistance"),
+lang.getTranslation("descBorderBlur"),
 lang.getTranslation("descBackgroundColor"),
 lang.getTranslation("descBackgroundOpacity"),
 lang.getTranslation("descSticksMode"),
@@ -169,16 +172,16 @@ lang.getTranslation("descSimultaneousRenderers")
     back = new IFButton(lang.getTranslation("btnBack"),50,30,100,20);
     back.addActionListener(applet);
     if(lang.name.equals("ua")){
-      savePreset = new IFButton(lang.getTranslation("btnSavePreset"),50,400,150,40);
+      savePreset = new IFButton(lang.getTranslation("btnSavePreset"),50,500,150,40);
       savePreset.addActionListener(applet);
     
-      loadPreset = new IFButton(lang.getTranslation("btnLoadPreset"),width-200,400,150,40);
+      loadPreset = new IFButton(lang.getTranslation("btnLoadPreset"),width-200,500,150,40);
       loadPreset.addActionListener(applet);
     }else{   
-      savePreset = new IFButton(lang.getTranslation("btnSavePreset"),50,400,150,20);
+      savePreset = new IFButton(lang.getTranslation("btnSavePreset"),50,500,150,20);
       savePreset.addActionListener(applet);
     
-      loadPreset = new IFButton(lang.getTranslation("btnLoadPreset"),width-200,400,150,20);
+      loadPreset = new IFButton(lang.getTranslation("btnLoadPreset"),width-200,500,150,20);
       loadPreset.addActionListener(applet);
     }   
     save = new IFButton(lang.getTranslation("btnSave"),width-150,30,100,20);

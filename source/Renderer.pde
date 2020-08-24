@@ -7,7 +7,8 @@ class Renderer extends Thread{
   String[]settings;
   String currentState="";
   int number;
-  int tailLength,vidWidth,borderThickness,bgOpacity,sticksMode,sticksModeVertPos;
+  int tailLength,vidWidth,bgOpacity,sticksMode,sticksModeVertPos,borderAngle,borderDistance,borderBlur;
+  float borderThickness;
   float fps;
   color bgColor,sticksColor;
   PImage prevImage;
@@ -403,9 +404,10 @@ class Renderer extends Thread{
     }
     float scl= 0.01;
     if (borderThickness>0) {
-      
-      out.image(border, vidWidth*scl*2,vidWidth*scl,vidWidth - vidWidth*scl*4,vidWidth/2 - vidWidth*scl*2);
-      out.filter(BLUR,borderThickness/3);
+      PVector v = PVector.fromAngle(radians(borderAngle));
+      v.setMag(borderDistance);
+      out.image(border, vidWidth*scl*2+v.x,vidWidth*scl+v.y,vidWidth - vidWidth*scl*4,vidWidth/2 - vidWidth*scl*2);
+      out.filter(BLUR,(float(borderBlur)/100)*((vidWidth/75.0f)/3));
     }
     out.image(alphaG,vidWidth*scl*2,vidWidth*scl,vidWidth - vidWidth*scl*4,vidWidth/2 - vidWidth*scl*2);
 
@@ -453,12 +455,15 @@ class Renderer extends Thread{
     fps=Float.parseFloat(settings[0]);
     tailLength=Integer.parseInt(settings[1]);
     vidWidth=Integer.parseInt(settings[2]);
-    borderThickness=(int)map(Integer.parseInt(settings[3]),0,100,0,(vidWidth/75.0f));
-    bgOpacity=Integer.parseInt(settings[5]);
-    sticksMode=Integer.parseInt(settings[6]);
-    sticksModeVertPos=Integer.parseInt(settings[7]);
-    bgColor = color(Integer.parseInt(settings[4].substring(1, 3), 16), Integer.parseInt(settings[4].substring(3, 5), 16), Integer.parseInt(settings[4].substring(5, 7), 16));
-    sticksColor = color(Integer.parseInt(settings[8].substring(1, 3), 16), Integer.parseInt(settings[8].substring(3, 5), 16), Integer.parseInt(settings[8].substring(5, 7), 16));
+    borderThickness=map(Integer.parseInt(settings[3]),0,100,0,(vidWidth/75.0f));
+    borderAngle=Integer.parseInt(settings[4]);
+    borderDistance=(int)map(Integer.parseInt(settings[5]),0,100,0,vidWidth/40);
+    borderBlur=Integer.parseInt(settings[6]);
+    bgOpacity=Integer.parseInt(settings[8]);
+    sticksMode=Integer.parseInt(settings[9]);
+    sticksModeVertPos=Integer.parseInt(settings[10]);
+    bgColor = color(Integer.parseInt(settings[7].substring(1, 3), 16), Integer.parseInt(settings[7].substring(3, 5), 16), Integer.parseInt(settings[7].substring(5, 7), 16));
+    sticksColor = color(Integer.parseInt(settings[11].substring(1, 3), 16), Integer.parseInt(settings[11].substring(3, 5), 16), Integer.parseInt(settings[11].substring(5, 7), 16));
     
   }
   @Override void run(){

@@ -30,7 +30,10 @@
 	<text id="descFPS">Кадры за секунду в финальном Видео. По умолчанию: 60, Рекомендовано: 30, 60, 120</text>
 	<text id="descTraillength">Traillength устанавливает длину следа за Stick</text>
 	<text id="descWidth">Width определяет ширину финального Видео. Высота автоматически рассчитывается с соотношением 2:1</text>
-	<text id="descBorderThickness">BorderThickness определяет ширину 'Теней', окружающих контуры (существенно увеличивает время рендера). Значения: 0 до 100</text>
+	<text id="descBorderAngle">BorderAngle устанавливает угол источника света, отбрасывающего Тень. Значения: от 0 до 360</text>
+	<text id="descBorderDistance">BorderDistance устанавливает расстояние от палочек до тени. Значения: от 0 до 100</text>
+	<text id="descBorderBlur">BorderBlur устанавливает степень размытия тени. Значения: от 0 до 100</text>
+	<text id="descBorderThickness">BorderThickness определяет ширину 'Теней', окружающих контуры (значительно увеличивает время рендеринга). Значения: 0 до 100</text>
 	<text id="descBackgroundColor">BackgroundColor определяет цвет всего фона. Значения: #000000 до #FFFFFF</text>
 	<text id="descBackgroundOpacity">BackgroundOpacity определяет прозрачность фона. Значения: 0 (100% прозрачный) до 100 (0% прозрачный)</text>
 	<text id="descSticksMode">SticksMode определяет sticks mode финального Видео. Значения: 1 до 4</text>

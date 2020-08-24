@@ -14,7 +14,7 @@ class RenderImage extends Thread{
       File f = new File(sketchPath()+"/"+path);
       f.getParentFile().mkdirs();
       ImageIO.write((BufferedImage)image.getImage(),"png",f);
-    }catch(Exception e){println("FEHLER RENDERIMAGE!");}
+    }catch(Exception e){e.printStackTrace();}
     done=true;
   }
 }

@@ -30,7 +30,10 @@
 	<text id="descFPS">Кадри за cекунду в фінальному Відео. За умовчанням: 60, Рекомендовано: 30, 60, 120</text>
 	<text id="descTraillength">Traillength встановлює довжину сліду за Stick</text>
 	<text id="descWidth">Width визначає ширину фінального Відео. Висота автоматично розраховується із співвідношенням 2:1</text>
-	<text id="descBorderThickness">BorderThickness визначає ширину 'Тіней', що оточують контури (суттєво збільшує час рендеру). Значення: 0 до 100</text>
+	<text id="descBorderThickness">BorderThickness визначає ширину 'Тіней', що оточують контури. Значення: 0 до 100</text>
+	<text id="descBorderAngle">BorderAngle встановлює кут нахилу джерела світла, який відкидає Тінь. Значення: від 0 до 360</text>
+	<text id="descBorderDistance">BorderDistance встановлює відстань від палички до тіні. Значення: від 0 до 100</text>
+	<text id="descBorderBlur">BorderBlur встановлює кількість розмиття, нанесеного на тінь (суттєво збільшує час рендеру). Значення: від 0 до 100</text>
 	<text id="descBackgroundColor">BackgroundColor визначає колір всього фону. Значення: #000000 до #FFFFFF</text>
 	<text id="descBackgroundOpacity">BackgroundOpacity визначає прозорість фону. Значення: 0 (100% прозорий) до 100 (0% прозорий)</text>
 	<text id="descSticksMode">SticksMode визначає sticks mode фінального Відео. Значення: 1 до 4</text>

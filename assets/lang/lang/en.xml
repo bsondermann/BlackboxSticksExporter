@@ -30,7 +30,10 @@
 	<text id="descFPS">Frames per Second of the final Video. Default: 60, Recommended: 30, 60, 120</text>
 	<text id="descTraillength">Traillength sets the length of the Trail behind the Stick. Unit: Number of frames the trail goes back</text>
 	<text id="descWidth">Width determines the width of the final Video. The hight is automatically calculated with a ratio of 2:1</text>
-	<text id="descBorderThickness">BorderThickness sets the width of a 'Shadow' surrounding the contours (increases render time a lot). Values: 0 to 100</text>
+	<text id="descBorderThickness">BorderThickness sets the width of a 'Shadow' surrounding the contours. Values: 0 to 100</text>
+	<text id="descBorderAngle">BorderAngle sets the angle of the of the light source that casts the Shadow. Values: 0 to 360</text>
+	<text id="descBorderDistance">BorderDistance sets distance from the sticks to the shadow. Values: 0 to 100</text>
+	<text id="descBorderBlur">BorderBlur sets amount of blur applied on the shadow (increases render time a lot). Values: 0 to 100</text>
 	<text id="descBackgroundColor">BackgroundColor sets the color of the entire background. Values: #000000 to #FFFFFF</text>
 	<text id="descBackgroundOpacity">BackgroundOpacity sets the transparency of the Background. Values: 0 (100% transparent) to 100 (0% transparent)</text>
 	<text id="descSticksMode">SticksMode sets the sticks mode of the final Video. Values: 1 to 4</text>

@@ -19,7 +19,6 @@ class ImageExporter extends Thread{
           
         Thread.sleep(10);
       }catch(Exception e){
-      println("FEHLER IMAGEEXPORTER!");
       e.printStackTrace();
     }
     }
