@@ -22,7 +22,7 @@ PrintStream stderr=System.err;
     active = true;
     this.applet = applet;
     createSelectionGui();
-   sound = new SoundFile(applet,"assets/done.wav");
+   //sound = new SoundFile(applet,sketchPath()+"/assets/done.wav");
   }
   void show(){
     

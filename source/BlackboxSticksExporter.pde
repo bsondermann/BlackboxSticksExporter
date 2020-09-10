@@ -19,7 +19,10 @@ Language lang;
 SDrop drop;
 void setup(){
   size(800,600);
+  useNativeSelect=false;
+  println(System.getProperty("os.name"));
   final PImage icon = loadImage("assets/icon.png");
+  println(sketchPath());
   surface.setIcon(icon);
   drop = new SDrop(this);
   data = loadXML("assets/data.xml");

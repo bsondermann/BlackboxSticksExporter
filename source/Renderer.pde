@@ -28,7 +28,12 @@ class Renderer extends Thread{
     currentState=lang.getTranslation("rendererStateConverting");
     createImage(1, 1, RGB).save(sketchPath()+"/temp/"+number+"/csv/temp.png");
     new File(sketchPath()+"/temp/"+number+"/csv/temp.png").delete();
-    ProcessBuilder pb = new ProcessBuilder(sketchPath()+"/assets/blackbox_decode.exe","--merge-gps",""+file.getAbsolutePath());
+    ProcessBuilder pb;
+    if(System.getProperty("os.name").contains("Mac")){
+    pb = new ProcessBuilder(sketchPath()+"/assets/blackbox_decode","--merge-gps",""+file.getAbsolutePath());
+    }else{
+      pb = new ProcessBuilder(sketchPath()+"/assets/blackbox_decode.exe","--merge-gps",""+file.getAbsolutePath());
+    }
     try {
     Process process = pb.start();
     InputStream is = process.getErrorStream();
@@ -423,7 +428,12 @@ class Renderer extends Thread{
   void compileLog(int sublog){
     if(stop){return;}
     currentState=lang.getTranslation("rendererStateCompiling");
-    ProcessBuilder processBuilder = new ProcessBuilder(sketchPath()+"/assets/ffmpeg.exe", "-r", fps+"", "-i", sketchPath()+"/temp/"+number+"/"+sublog+"/Images/line_%010d.png", "-vcodec", "prores_ks","-pix_fmt", "yuva444p10le", "-profile:v", "4444", "-q:v", "20", "-r", fps+"", "-y", outputPath.getAbsolutePath()+"/"+file.getName().substring(0,file.getName().length()-4)+".mov");
+    ProcessBuilder processBuilder;
+    if(System.getProperty("os.name").contains("Mac")){
+    processBuilder = new ProcessBuilder(sketchPath()+"/assets/ffmpeg", "-r", fps+"", "-i", sketchPath()+"/temp/"+number+"/"+sublog+"/Images/line_%010d.png", "-vcodec", "prores_ks","-pix_fmt", "yuva444p10le", "-profile:v", "4444", "-q:v", "20", "-r", fps+"", "-y", outputPath.getAbsolutePath()+"/"+file.getName().substring(0,file.getName().length()-4)+".mov");
+    }else{
+    processBuilder = new ProcessBuilder(sketchPath()+"/assets/ffmpeg.exe", "-r", fps+"", "-i", sketchPath()+"/temp/"+number+"/"+sublog+"/Images/line_%010d.png", "-vcodec", "prores_ks","-pix_fmt", "yuva444p10le", "-profile:v", "4444", "-q:v", "20", "-r", fps+"", "-y", outputPath.getAbsolutePath()+"/"+file.getName().substring(0,file.getName().length()-4)+".mov");
+    }
   try {
     Process process = processBuilder.start();
     InputStream is = process.getErrorStream();
