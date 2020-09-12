@@ -22,8 +22,10 @@ PrintStream stderr=System.err;
     active = true;
     this.applet = applet;
     createSelectionGui();
+    try{
    sound = new SoundFile(applet,sketchPath()+"/assets/done.wav");
-  }
+    }catch(Exception e){e.printStackTrace();}  
+}
   void show(){
     
     if(set!=null){set.show();}
@@ -243,8 +245,9 @@ PrintStream stderr=System.err;
       shutdown();
     }
     if(checkSound.isSelected()){
-      
-      sound.play();
+      if(sound!=null){
+        sound.play();
+      }
     }
     clearTemp();
     rm=null;
