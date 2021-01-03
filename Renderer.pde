@@ -13,12 +13,20 @@ class Renderer extends Thread{
   color bgColor,sticksColor;
   PImage prevImage;
   int starttime=0;
+  boolean betaflight=true;
   ImageExporter ie;
   Renderer(File f,String[]s,int number){
     currentState="Idle";
     this.number= number;
     settings = s;
     file = f;
+    String []temp = loadStrings(f);
+    println(temp[22]);
+      if(temp.length>0){
+        if(temp[22].contains("INAV")){
+          betaflight = false;
+        }
+      }
     parseSettings();
     
   }
@@ -62,9 +70,31 @@ class Renderer extends Thread{
 
   void renderLog(int sublog){
     if(stop){return;}
+    
+    int colthrottle=16;
+    int colpitch = 14;
+    int colyaw=15;
+    int colroll=13;
+    
+    
+    
     currentState=lang.getTranslation("rendererStateRendering");
     int w = vidWidth;
     RamTable table = new RamTable(file.getAbsolutePath());
+    RamTableRow names=table.getRow(0);
+    for(int i = 0; i<names.content.length;i++){
+      if(names.getString(i).contains("rcCommand[0]")){colroll=i;}
+      if(names.getString(i).contains("rcCommand[1]")){colpitch=i;}
+      if(names.getString(i).contains("rcCommand[2]")){colyaw=i;}
+      if(names.getString(i).contains("rcCommand[3]")){colthrottle=i;}
+      
+    }
+    if(!betaflight){
+      colroll=22;
+      colpitch=23;
+      colyaw=24;
+      colthrottle=25;
+    }
     if(table.getRowCount()<=2){return;}
     PGraphics alphaG=createGraphics(vidWidth,vidWidth/2);
     PGraphics border=createGraphics(vidWidth,vidWidth/2);
@@ -78,6 +108,26 @@ class Renderer extends Thread{
     if(stop){return;}
     RamTableRow row = table.getRow(int(i));
     currentFrame++;
+    float valthrottle=0;
+    float valroll=0;
+    float valpitch=0;
+    float valyaw=0;
+    
+    
+    if(betaflight){
+      valthrottle= map(constrain(-(int)map(int(row.getString(colthrottle).trim()), 1000, 2000, -500, 500), -500, 500), -500, 500, 2000, 1000);
+      valpitch = int(row.getString(colpitch).trim());
+      valyaw=-int(row.getString(colyaw).trim());
+      valroll=int(row.getString(colroll).trim());
+    }else{
+      valthrottle= map(constrain(-(int)map(int(row.getString(colthrottle).trim()), 1000, 2000, -500, 500), -500, 500), -500, 500, 2000, 1000);
+      valpitch = map(int(row.getString(colpitch).trim()),1000,2000,-500,500);
+      valyaw=map(int(row.getString(colyaw).trim()),1000,2000,-500,500);
+      valroll=map(int(row.getString(colroll).trim()),1000,2000,-500,500);
+    }
+    
+    
+    
     if(borderThickness>0){
     border.beginDraw();
     border.clear();
@@ -91,61 +141,68 @@ class Renderer extends Thread{
     border.rect(w/2-w/30-w/3-borderThickness, w/6-w/400+((w/3)/7.3)/2-borderThickness, w/3+borderThickness*2, w/200+borderThickness*2);
     border.rect(w/2+w/30-borderThickness, w/6-w/400+((w/3)/7.3)/2-borderThickness, w/3+borderThickness*2, w/200+borderThickness*2);
     
+    
+    
+    
+    
+    
+    
+    
     //text
     border.textSize(w/25);
     if(sticksMode == 2){
       //throttle
       border.textAlign(LEFT, CENTER);
-      textStroke((int)map(constrain(-(int)map(int(row.getString(16).trim()), 1000, 2000, -500, 500), -500, 500), -500, 500, 2000, 1000)+"", w/75, w/6-w/200+((w/3)/7.3)/2,borderThickness,20,border);
+      textStroke((int)valthrottle+"", w/75, w/6-w/200+((w/3)/7.3)/2,borderThickness,20,border);
       //pitch
       border.textAlign(RIGHT, CENTER);
-      textStroke(int(row.getString(14).trim())+"", w-w/75, w/6-w/200+((w/3)/7.3)/2,borderThickness,20,border);
+      textStroke((int)valpitch+"", w-w/75, w/6-w/200+((w/3)/7.3)/2,borderThickness,20,border);
       //yaw
       border.textAlign(CENTER, BOTTOM);
-      textStroke(-int(row.getString(15).trim())+"", w/2-w/30-w/6-w/400, (w/2.2)-w/75,borderThickness,20,border);
+      textStroke((int)valyaw+"", w/2-w/30-w/6-w/400, (w/2.2)-w/75,borderThickness,20,border);
       //roll
       border.textAlign(CENTER, BOTTOM);
-      textStroke(int(row.getString(13).trim())+"", w/2+w/30+w/6-w/400, (w/2.2)-w/75,borderThickness,20,border);
+      textStroke((int)valroll+"", w/2+w/30+w/6-w/400, (w/2.2)-w/75,borderThickness,20,border);
     }else if(sticksMode ==3){
       //throttle
       border.textAlign(LEFT, CENTER);
-      textStroke(int(row.getString(14).trim())+"", w/75, w/6-w/200+((w/3)/7.3)/2,borderThickness,20,border);
+      textStroke((int)valpitch+"", w/75, w/6-w/200+((w/3)/7.3)/2,borderThickness,20,border);
       //pitch
       border.textAlign(RIGHT, CENTER);
-      textStroke((int)map(constrain(-(int)map(int(row.getString(16).trim()), 1000, 2000, -500, 500), -500, 500), -500, 500, 2000, 1000)+"", w-w/75, w/6-w/200+((w/3)/7.3)/2,borderThickness,20,border);
+      textStroke((int)valthrottle+"", w-w/75, w/6-w/200+((w/3)/7.3)/2,borderThickness,20,border);
       //yaw
       border.textAlign(CENTER, BOTTOM);
-      textStroke(int(row.getString(13).trim())+"", w/2-w/30-w/6-w/400, (w/2.2)-w/75,borderThickness,20,border);
+      textStroke((int)valroll+"", w/2-w/30-w/6-w/400, (w/2.2)-w/75,borderThickness,20,border);
       //roll
       border.textAlign(CENTER, BOTTOM);
-      textStroke(-int(row.getString(15).trim())+"", w/2+w/30+w/6-w/400, (w/2.2)-w/75,borderThickness,20,border);
+      textStroke((int)valyaw+"", w/2+w/30+w/6-w/400, (w/2.2)-w/75,borderThickness,20,border);
     
     }if(sticksMode == 1){
       //throttle
       border.textAlign(LEFT, CENTER);
-      textStroke(int(row.getString(14).trim())+"", w/75, w/6-w/200+((w/3)/7.3)/2,borderThickness,20,border);
+      textStroke((int)valpitch+"", w/75, w/6-w/200+((w/3)/7.3)/2,borderThickness,20,border);
       //pitch
       border.textAlign(RIGHT, CENTER);
-      textStroke((int)map(constrain(-(int)map(int(row.getString(16).trim()), 1000, 2000, -500, 500), -500, 500), -500, 500, 2000, 1000)+"", w-w/75, w/6-w/200+((w/3)/7.3)/2,borderThickness,20,border);
+      textStroke((int)valthrottle+"", w-w/75, w/6-w/200+((w/3)/7.3)/2,borderThickness,20,border);
       //yaw
       border.textAlign(CENTER, BOTTOM);
-      textStroke(-int(row.getString(15).trim())+"", w/2-w/30-w/6-w/400, (w/2.2)-w/75,borderThickness,20,border);
+      textStroke((int)valyaw+"", w/2-w/30-w/6-w/400, (w/2.2)-w/75,borderThickness,20,border);
       //roll
       border.textAlign(CENTER, BOTTOM);
-      textStroke(int(row.getString(13).trim())+"", w/2+w/30+w/6-w/400, (w/2.2)-w/75,borderThickness,20,border);
+      textStroke((int)valroll+"", w/2+w/30+w/6-w/400, (w/2.2)-w/75,borderThickness,20,border);
     }if(sticksMode == 4){
       //throttle
       border.textAlign(LEFT, CENTER);
-      textStroke((int)map(constrain(-(int)map(int(row.getString(16).trim()), 1000, 2000, -500, 500), -500, 500), -500, 500, 2000, 1000)+"", w/75, w/6-w/200+((w/3)/7.3)/2,borderThickness,20,border);
+      textStroke((int)valthrottle+"", w/75, w/6-w/200+((w/3)/7.3)/2,borderThickness,20,border);
       //pitch
       border.textAlign(RIGHT, CENTER);
-      textStroke(int(row.getString(14).trim())+"", w-w/75, w/6-w/200+((w/3)/7.3)/2,borderThickness,20,border);
+      textStroke((int)valpitch+"", w-w/75, w/6-w/200+((w/3)/7.3)/2,borderThickness,20,border);
       //yaw
       border.textAlign(CENTER, BOTTOM);
-      textStroke(int(row.getString(13).trim())+"", w/2-w/30-w/6-w/400, (w/2.2)-w/75,borderThickness,20,border);
+      textStroke((int)valroll+"", w/2-w/30-w/6-w/400, (w/2.2)-w/75,borderThickness,20,border);
       //roll
       border.textAlign(CENTER, BOTTOM);
-      textStroke(-int(row.getString(15).trim())+"", w/2+w/30+w/6-w/400, (w/2.2)-w/75,borderThickness,20,border);
+      textStroke((int)valyaw+"", w/2+w/30+w/6-w/400, (w/2.2)-w/75,borderThickness,20,border);
     }
     
     
@@ -161,45 +218,71 @@ class Renderer extends Thread{
       border.fill(0,0,0,255);
       float r = map(j, 0, space*taillength, ((w/3)/7.3)/1.5, ((w/3)/7.3)/10)+borderThickness*2;
       float x=0, y=0, x1=0, y1=0;
+      
+      
+      
+      float valthrottletrail=0;
+      float valrolltrail=0;
+      float valpitchtrail=0;
+      float valyawtrail=0;
+    
+    
+    if(betaflight){
+      valthrottletrail=-(int)map(int(trailrow.getString(colthrottle).trim()), 1000, 2000, -500, 500);
+      valpitchtrail = map(-int(trailrow.getString(colpitch).trim()), -500, 500, 0, w/3);
+      valyawtrail=-int(trailrow.getString(colyaw).trim());
+      valrolltrail=int(trailrow.getString(colroll).trim());
+    }else{
+      valthrottletrail=map(int(trailrow.getString(colthrottle).trim()),1000,2000,500,-500);
+      valpitchtrail = map(int(trailrow.getString(colpitch).trim()),1000,2000,w/3,0);
+      valyawtrail=map(int(trailrow.getString(colyaw).trim()),1000,2000,-500,500);
+      valrolltrail=map(int(trailrow.getString(colroll).trim()),1000,2000,-500,500);
+    }
+      
+      
+      
+      
+      
+      
       if (sticksMode==2) {
         //yaw
-        x =map(-int(trailrow.getString(15).trim()), -500, 500, w/2-w/30-w/3, w/2-w/30-w/3+w/3);
+        x =map(valyawtrail, -500, 500, w/2-w/30-w/3, w/2-w/30-w/3+w/3);
         //throttle
-        y = map(-(int)map(int(trailrow.getString(16).trim()), 1000, 2000, -500, 500), -500, 500, 0, w/3)+((w/3)/7.3)/2;
+        y = map(valthrottletrail, -500, 500, 0, w/3)+((w/3)/7.3)/2;
         //roll
-        x1= map(int(trailrow.getString(13).trim()), -500, 500, w/2+w/30, w/2+w/30+w/3);
+        x1= map(valrolltrail, -500, 500, w/2+w/30, w/2+w/30+w/3);
         //pitch
-        y1 = map(-int(trailrow.getString(14).trim()), -500, 500, 0, w/3)+((w/3)/7.3)/2;
+        y1 = valpitchtrail+((w/3)/7.3)/2;
       }
       if (sticksMode==3) {
         //yaw
-        x =map(int(trailrow.getString(13).trim()), -500, 500, w/2-w/30-w/3, w/2-w/30-w/3+w/3);
+        x =map(valrolltrail, -500, 500, w/2-w/30-w/3, w/2-w/30-w/3+w/3);
         //throttle
-        y = map(-int(trailrow.getString(14).trim()), -500, 500, 0, w/3)+((w/3)/7.3)/2;
+        y = valpitchtrail+((w/3)/7.3)/2;
         //roll
-        x1= map(-int(trailrow.getString(15).trim()), -500, 500, w/2+w/30, w/2+w/30+w/3);
+        x1= map(valyawtrail, -500, 500, w/2+w/30, w/2+w/30+w/3);
         //pitch
-        y1 = map(-(int)map(int(trailrow.getString(16).trim()), 1000, 2000, -500, 500), -500, 500, 0, w/3)+((w/3)/7.3)/2;
+        y1 = map(valthrottletrail, -500, 500, 0, w/3)+((w/3)/7.3)/2;
       }
       if (sticksMode==1) {
         //yaw
-        x =map(-int(trailrow.getString(15).trim()), -500, 500, w/2-w/30-w/3, w/2-w/30-w/3+w/3);
+        x =map(valyawtrail, -500, 500, w/2-w/30-w/3, w/2-w/30-w/3+w/3);
         //throttle
-        y = map(-int(trailrow.getString(14).trim()), -500, 500, 0, w/3)+((w/3)/7.3)/2;
+        y = valpitchtrail+((w/3)/7.3)/2;
         //roll
-        x1= map(int(trailrow.getString(13).trim()), -500, 500, w/2+w/30, w/2+w/30+w/3);
+        x1= map(valrolltrail, -500, 500, w/2+w/30, w/2+w/30+w/3);
         //pitch
-        y1 = map(-(int)map(int(trailrow.getString(16).trim()), 1000, 2000, -500, 500), -500, 500, 0, w/3)+((w/3)/7.3)/2;
+        y1 = map(valthrottletrail, -500, 500, 0, w/3)+((w/3)/7.3)/2;
       }
       if (sticksMode==4) {
         //yaw
-        x =map(int(trailrow.getString(13).trim()), -500, 500, w/2-w/30-w/3, w/2-w/30-w/3+w/3);
+        x =map(valrolltrail, -500, 500, w/2-w/30-w/3, w/2-w/30-w/3+w/3);
         //throttle
-        y = map(-(int)map(int(trailrow.getString(16).trim()), 1000, 2000, -500, 500), -500, 500, 0, w/3)+((w/3)/7.3)/2;
+        y = map(valthrottletrail, -500, 500, 0, w/3)+((w/3)/7.3)/2;
         //roll
-        x1= map(-int(trailrow.getString(15).trim()), -500, 500, w/2+w/30, w/2+w/30+w/3);
+        x1= map(valyawtrail, -500, 500, w/2+w/30, w/2+w/30+w/3);
         //pitch
-        y1 = map(-int(trailrow.getString(14).trim()), -500, 500, 0, w/3)+((w/3)/7.3)/2;
+        y1 = valpitchtrail+((w/3)/7.3)/2;
       }
       if (x!=prevx||y!=prevy) {
         border.ellipse(x, y, r, r);
@@ -223,19 +306,19 @@ class Renderer extends Thread{
     }
     border.fill(0,0,0, 255);
     if (sticksMode==2) {
-      border.ellipse(map(-int(row.getString(15).trim()), -500, 500, w/2-w/30-w/3, w/2-w/30-w/3+w/3), map(-(int)map(int(row.getString(16).trim()), 1000, 2000, -500, 500), -500, 500, 0, w/3)+((w/3)/7.3)/2, (w/3)/7.3+borderThickness*2, (w/3)/7.3+borderThickness*2);
-      border.ellipse(map(int(row.getString(13).trim()), -500, 500, w/2+w/30, w/2+w/30+w/3), map(-int(row.getString(14).trim()), -500, 500, 0, w/3)+((w/3)/7.3)/2, (w/3)/7.3+borderThickness*2, (w/3)/7.3+borderThickness*2);
+      border.ellipse(map(valyaw, -500, 500, w/2-w/30-w/3, w/2-w/30-w/3+w/3), map(-(int)map(int(row.getString(colthrottle).trim()), 1000, 2000, -500, 500), -500, 500, 0, w/3)+((w/3)/7.3)/2, (w/3)/7.3+borderThickness*2, (w/3)/7.3+borderThickness*2);
+      border.ellipse(map(valroll, -500, 500, w/2+w/30, w/2+w/30+w/3), map(-valpitch, -500, 500, 0, w/3)+((w/3)/7.3)/2, (w/3)/7.3+borderThickness*2, (w/3)/7.3+borderThickness*2);
     }else if(sticksMode==3){
-      border.ellipse(map(int(row.getString(13).trim()), -500, 500, w/2-w/30-w/3, w/2-w/30-w/3+w/3), map(-int(row.getString(14).trim()), -500, 500, 0, w/3)+((w/3)/7.3)/2, (w/3)/7.3+borderThickness*2, (w/3)/7.3+borderThickness*2);
-      border.ellipse(map(-int(row.getString(15).trim()), -500, 500, w/2+w/30, w/2+w/30+w/3), map(-(int)map(int(row.getString(16).trim()), 1000, 2000, -500, 500), -500, 500, 0, w/3)+((w/3)/7.3)/2, (w/3)/7.3+borderThickness*2, (w/3)/7.3+borderThickness*2);
+      border.ellipse(map(valroll, -500, 500, w/2-w/30-w/3, w/2-w/30-w/3+w/3), map(-valpitch, -500, 500, 0, w/3)+((w/3)/7.3)/2, (w/3)/7.3+borderThickness*2, (w/3)/7.3+borderThickness*2);
+      border.ellipse(map(valyaw, -500, 500, w/2+w/30, w/2+w/30+w/3), map(-(int)map(int(row.getString(colthrottle).trim()), 1000, 2000, -500, 500), -500, 500, 0, w/3)+((w/3)/7.3)/2, (w/3)/7.3+borderThickness*2, (w/3)/7.3+borderThickness*2);
     
       }
     else if(sticksMode==1){
-       border.ellipse(map(-int(row.getString(15).trim()), -500, 500, w/2-w/30-w/3, w/2-w/30-w/3+w/3), map(-int(row.getString(14).trim()), -500, 500, 0, w/3)+((w/3)/7.3)/2, (w/3)/7.3+borderThickness*2, (w/3)/7.3+borderThickness*2);
-      border.ellipse(map(int(row.getString(13).trim()), -500, 500, w/2+w/30, w/2+w/30+w/3), map(-(int)map(int(row.getString(16).trim()), 1000, 2000, -500, 500), -500, 500, 0, w/3)+((w/3)/7.3)/2, (w/3)/7.3+borderThickness*2, (w/3)/7.3+borderThickness*2);
+       border.ellipse(map(valyaw, -500, 500, w/2-w/30-w/3, w/2-w/30-w/3+w/3), map(-valpitch, -500, 500, 0, w/3)+((w/3)/7.3)/2, (w/3)/7.3+borderThickness*2, (w/3)/7.3+borderThickness*2);
+      border.ellipse(map(valroll, -500, 500, w/2+w/30, w/2+w/30+w/3), map(-(int)map(int(row.getString(colthrottle).trim()), 1000, 2000, -500, 500), -500, 500, 0, w/3)+((w/3)/7.3)/2, (w/3)/7.3+borderThickness*2, (w/3)/7.3+borderThickness*2);
     }if (sticksMode==4) {
-      border.ellipse(map(int(row.getString(13).trim()), -500, 500, w/2-w/30-w/3, w/2-w/30-w/3+w/3), map(-(int)map(int(row.getString(16).trim()), 1000, 2000, -500, 500), -500, 500, 0, w/3)+((w/3)/7.3)/2, (w/3)/7.3+borderThickness*2, (w/3)/7.3+borderThickness*2);
-      border.ellipse(map(-int(row.getString(15).trim()), -500, 500, w/2+w/30, w/2+w/30+w/3), map(-int(row.getString(14).trim()), -500, 500, 0, w/3)+((w/3)/7.3)/2, (w/3)/7.3+borderThickness*2, (w/3)/7.3+borderThickness*2);
+      border.ellipse(map(valroll, -500, 500, w/2-w/30-w/3, w/2-w/30-w/3+w/3), map(-(int)map(int(row.getString(colthrottle).trim()), 1000, 2000, -500, 500), -500, 500, 0, w/3)+((w/3)/7.3)/2, (w/3)/7.3+borderThickness*2, (w/3)/7.3+borderThickness*2);
+      border.ellipse(map(valyaw, -500, 500, w/2+w/30, w/2+w/30+w/3), map(-valpitch, -500, 500, 0, w/3)+((w/3)/7.3)/2, (w/3)/7.3+borderThickness*2, (w/3)/7.3+borderThickness*2);
     }
     border.endDraw();
     
@@ -259,56 +342,56 @@ class Renderer extends Thread{
     if(sticksMode == 2){
       //throttle
       alphaG.textAlign(LEFT, CENTER);
-      alphaG.text((int)map(constrain(-(int)map(int(row.getString(16).trim()), 1000, 2000, -500, 500), -500, 500), -500, 500, 2000, 1000)+"", w/75, w/6-w/200+((w/3)/7.3)/2);
+      alphaG.text((int)valthrottle+"", w/75, w/6-w/200+((w/3)/7.3)/2);
       //pitch
       alphaG.textAlign(RIGHT, CENTER);
-      alphaG.text(int(row.getString(14).trim())+"", w-w/75, w/6-w/200+((w/3)/7.3)/2);
+      alphaG.text((int)valpitch+"", w-w/75, w/6-w/200+((w/3)/7.3)/2);
       //yaw
       alphaG.textAlign(CENTER, BOTTOM);
-      alphaG.text(-int(row.getString(15).trim())+"", w/2-w/30-w/6-w/400, (w/2.2)-w/75);
+      alphaG.text((int)valyaw+"", w/2-w/30-w/6-w/400, (w/2.2)-w/75);
       //roll
       alphaG.textAlign(CENTER, BOTTOM);
-      alphaG.text(int(row.getString(13).trim())+"", w/2+w/30+w/6-w/400, (w/2.2)-w/75);
+      alphaG.text((int)valroll+"", w/2+w/30+w/6-w/400, (w/2.2)-w/75);
     }else if(sticksMode ==3){
       //throttle
       alphaG.textAlign(LEFT, CENTER);
-      alphaG.text(int(row.getString(14).trim())+"", w/75, w/6-w/200+((w/3)/7.3)/2);
+      alphaG.text((int)valpitch+"", w/75, w/6-w/200+((w/3)/7.3)/2);
       //pitch
       alphaG.textAlign(RIGHT, CENTER);
-      alphaG.text((int)map(constrain(-(int)map(int(row.getString(16).trim()), 1000, 2000, -500, 500), -500, 500), -500, 500, 2000, 1000)+"", w-w/75, w/6-w/200+((w/3)/7.3)/2);
+      alphaG.text((int)valthrottle+"", w-w/75, w/6-w/200+((w/3)/7.3)/2);
       //yaw
       alphaG.textAlign(CENTER, BOTTOM);
-      alphaG.text(int(row.getString(13).trim())+"", w/2-w/30-w/6-w/400, (w/2.2)-w/75);
+      alphaG.text((int)valroll+"", w/2-w/30-w/6-w/400, (w/2.2)-w/75);
       //roll
       alphaG.textAlign(CENTER, BOTTOM);
-      alphaG.text(-int(row.getString(15).trim())+"", w/2+w/30+w/6-w/400, (w/2.2)-w/75);
+      alphaG.text((int)valyaw+"", w/2+w/30+w/6-w/400, (w/2.2)-w/75);
     
     }if(sticksMode == 1){
       //throttle
       alphaG.textAlign(LEFT, CENTER);
-      alphaG.text(int(row.getString(14).trim())+"", w/75, w/6-w/200+((w/3)/7.3)/2);
+      alphaG.text((int)valpitch+"", w/75, w/6-w/200+((w/3)/7.3)/2);
       //pitch
       alphaG.textAlign(RIGHT, CENTER);
-      alphaG.text((int)map(constrain(-(int)map(int(row.getString(16).trim()), 1000, 2000, -500, 500), -500, 500), -500, 500, 2000, 1000)+"", w-w/75, w/6-w/200+((w/3)/7.3)/2);
+      alphaG.text((int)valthrottle+"", w-w/75, w/6-w/200+((w/3)/7.3)/2);
       //yaw
       alphaG.textAlign(CENTER, BOTTOM);
-      alphaG.text(-int(row.getString(15).trim())+"", w/2-w/30-w/6-w/400, (w/2.2)-w/75);
+      alphaG.text((int)valyaw+"", w/2-w/30-w/6-w/400, (w/2.2)-w/75);
       //roll
       alphaG.textAlign(CENTER, BOTTOM);
-      alphaG.text(int(row.getString(13).trim())+"", w/2+w/30+w/6-w/400, (w/2.2)-w/75);
+      alphaG.text((int)valroll+"", w/2+w/30+w/6-w/400, (w/2.2)-w/75);
     }if(sticksMode == 4){
       //throttle
       alphaG.textAlign(LEFT, CENTER);
-      alphaG.text((int)map(constrain(-(int)map(int(row.getString(16).trim()), 1000, 2000, -500, 500), -500, 500), -500, 500, 2000, 1000)+"", w/75, w/6-w/200+((w/3)/7.3)/2);
+      alphaG.text((int)valthrottle+"", w/75, w/6-w/200+((w/3)/7.3)/2);
       //pitch
       alphaG.textAlign(RIGHT, CENTER);
-      alphaG.text(int(row.getString(14).trim())+"", w-w/75, w/6-w/200+((w/3)/7.3)/2);
+      alphaG.text((int)valpitch+"", w-w/75, w/6-w/200+((w/3)/7.3)/2);
       //yaw
       alphaG.textAlign(CENTER, BOTTOM);
-      alphaG.text(int(row.getString(13).trim())+"", w/2-w/30-w/6-w/400, (w/2.2)-w/75);
+      alphaG.text((int)valroll+"", w/2-w/30-w/6-w/400, (w/2.2)-w/75);
       //roll
       alphaG.textAlign(CENTER, BOTTOM);
-      alphaG.text(-int(row.getString(15).trim())+"", w/2+w/30+w/6-w/400, (w/2.2)-w/75);
+      alphaG.text((int)valyaw+"", w/2+w/30+w/6-w/400, (w/2.2)-w/75);
     }
     
     
@@ -324,45 +407,68 @@ class Renderer extends Thread{
       alphaG.fill(175, 175, 175, map(j, 0, space*taillength, 100, 0));
       float r = map(j, 0, space*taillength, ((w/3)/7.3)/1.5, ((w/3)/7.3)/10);
       float x=0, y=0, x1=0, y1=0;
+      
+      
+      float valthrottletrail=0;
+      float valrolltrail=0;
+      float valpitchtrail=0;
+      float valyawtrail=0;
+    
+    
+    if(betaflight){
+      valthrottletrail=-(int)map(int(trailrow.getString(colthrottle).trim()), 1000, 2000, -500, 500);
+      valpitchtrail = map(-int(trailrow.getString(colpitch).trim()), -500, 500, 0, w/3);
+      valyawtrail=-int(trailrow.getString(colyaw).trim());
+      valrolltrail=int(trailrow.getString(colroll).trim());
+    }else{
+      valthrottletrail=map(int(trailrow.getString(colthrottle).trim()),1000,2000,500,-500);
+      valpitchtrail = map(int(trailrow.getString(colpitch).trim()),1000,2000,w/3,0);
+      valyawtrail=map(int(trailrow.getString(colyaw).trim()),1000,2000,-500,500);
+      valrolltrail=map(int(trailrow.getString(colroll).trim()),1000,2000,-500,500);
+    }
+      
+      
+      
+      
       if (sticksMode==2) {
         //yaw
-        x =map(-int(trailrow.getString(15).trim()), -500, 500, w/2-w/30-w/3, w/2-w/30-w/3+w/3);
+        x =map(valyawtrail, -500, 500, w/2-w/30-w/3, w/2-w/30-w/3+w/3);
         //throttle
-        y = map(-(int)map(int(trailrow.getString(16).trim()), 1000, 2000, -500, 500), -500, 500, 0, w/3)+((w/3)/7.3)/2;
+        y = map(valthrottletrail, -500, 500, 0, w/3)+((w/3)/7.3)/2;
         //roll
-        x1= map(int(trailrow.getString(13).trim()), -500, 500, w/2+w/30, w/2+w/30+w/3);
+        x1= map(valrolltrail, -500, 500, w/2+w/30, w/2+w/30+w/3);
         //pitch
-        y1 = map(-int(trailrow.getString(14).trim()), -500, 500, 0, w/3)+((w/3)/7.3)/2;
+        y1 = valpitchtrail+((w/3)/7.3)/2;
       }
       if (sticksMode==3) {
         //yaw
-        x =map(int(trailrow.getString(13).trim()), -500, 500, w/2-w/30-w/3, w/2-w/30-w/3+w/3);
+        x =map(valrolltrail, -500, 500, w/2-w/30-w/3, w/2-w/30-w/3+w/3);
         //throttle
-        y = map(-int(trailrow.getString(14).trim()), -500, 500, 0, w/3)+((w/3)/7.3)/2;
+        y = valpitchtrail+((w/3)/7.3)/2;
         //roll
-        x1= map(-int(trailrow.getString(15).trim()), -500, 500, w/2+w/30, w/2+w/30+w/3);
+        x1= map(valyawtrail, -500, 500, w/2+w/30, w/2+w/30+w/3);
         //pitch
-        y1 = map(-(int)map(int(trailrow.getString(16).trim()), 1000, 2000, -500, 500), -500, 500, 0, w/3)+((w/3)/7.3)/2;
+        y1 = map(valthrottletrail, -500, 500, 0, w/3)+((w/3)/7.3)/2;
       }
       if (sticksMode==1) {
         //yaw
-        x =map(-int(trailrow.getString(15).trim()), -500, 500, w/2-w/30-w/3, w/2-w/30-w/3+w/3);
+        x =map(valyawtrail, -500, 500, w/2-w/30-w/3, w/2-w/30-w/3+w/3);
         //throttle
-        y = map(-int(trailrow.getString(14).trim()), -500, 500, 0, w/3)+((w/3)/7.3)/2;
+        y = valpitchtrail+((w/3)/7.3)/2;
         //roll
-        x1= map(int(trailrow.getString(13).trim()), -500, 500, w/2+w/30, w/2+w/30+w/3);
+        x1= map(valrolltrail, -500, 500, w/2+w/30, w/2+w/30+w/3);
         //pitch
-        y1 = map(-(int)map(int(trailrow.getString(16).trim()), 1000, 2000, -500, 500), -500, 500, 0, w/3)+((w/3)/7.3)/2;
+        y1 = map(valthrottletrail, -500, 500, 0, w/3)+((w/3)/7.3)/2;
       }
       if (sticksMode==4) {
         //yaw
-        x =map(int(trailrow.getString(13).trim()), -500, 500, w/2-w/30-w/3, w/2-w/30-w/3+w/3);
+        x =map(valrolltrail, -500, 500, w/2-w/30-w/3, w/2-w/30-w/3+w/3);
         //throttle
-        y = map(-(int)map(int(trailrow.getString(16).trim()), 1000, 2000, -500, 500), -500, 500, 0, w/3)+((w/3)/7.3)/2;
+        y = map(valthrottletrail, -500, 500, 0, w/3)+((w/3)/7.3)/2;
         //roll
-        x1= map(-int(trailrow.getString(15).trim()), -500, 500, w/2+w/30, w/2+w/30+w/3);
+        x1= map(valyawtrail, -500, 500, w/2+w/30, w/2+w/30+w/3);
         //pitch
-        y1 = map(-int(trailrow.getString(14).trim()), -500, 500, 0, w/3)+((w/3)/7.3)/2;
+        y1 = valpitchtrail+((w/3)/7.3)/2;
       }
       if (x!=prevx||y!=prevy) {
         alphaG.ellipse(x, y, r, r);
@@ -385,19 +491,19 @@ class Renderer extends Thread{
     }
     alphaG.fill(sticksColor, 255);
     if (sticksMode==2) {
-      alphaG.ellipse(map(-int(row.getString(15).trim()), -500, 500, w/2-w/30-w/3, w/2-w/30-w/3+w/3), map(-(int)map(int(row.getString(16).trim()), 1000, 2000, -500, 500), -500, 500, 0, w/3)+((w/3)/7.3)/2, (w/3)/7.3, (w/3)/7.3);
-      alphaG.ellipse(map(int(row.getString(13).trim()), -500, 500, w/2+w/30, w/2+w/30+w/3), map(-int(row.getString(14).trim()), -500, 500, 0, w/3)+((w/3)/7.3)/2, (w/3)/7.3, (w/3)/7.3);
+      alphaG.ellipse(map(valyaw, -500, 500, w/2-w/30-w/3, w/2-w/30-w/3+w/3), map(-(int)map(int(row.getString(colthrottle).trim()), 1000, 2000, -500, 500), -500, 500, 0, w/3)+((w/3)/7.3)/2, (w/3)/7.3, (w/3)/7.3);
+      alphaG.ellipse(map(valroll, -500, 500, w/2+w/30, w/2+w/30+w/3), map(-valpitch, -500, 500, 0, w/3)+((w/3)/7.3)/2, (w/3)/7.3, (w/3)/7.3);
     }else if(sticksMode==3){
-      alphaG.ellipse(map(int(row.getString(13).trim()), -500, 500, w/2-w/30-w/3, w/2-w/30-w/3+w/3), map(-int(row.getString(14).trim()), -500, 500, 0, w/3)+((w/3)/7.3)/2, (w/3)/7.3, (w/3)/7.3);
-      alphaG.ellipse(map(-int(row.getString(15).trim()), -500, 500, w/2+w/30, w/2+w/30+w/3), map(-(int)map(int(row.getString(16).trim()), 1000, 2000, -500, 500), -500, 500, 0, w/3)+((w/3)/7.3)/2, (w/3)/7.3, (w/3)/7.3);
+      alphaG.ellipse(map(valroll, -500, 500, w/2-w/30-w/3, w/2-w/30-w/3+w/3), map(-valpitch, -500, 500, 0, w/3)+((w/3)/7.3)/2, (w/3)/7.3, (w/3)/7.3);
+      alphaG.ellipse(map(valyaw, -500, 500, w/2+w/30, w/2+w/30+w/3), map(-(int)map(int(row.getString(colthrottle).trim()), 1000, 2000, -500, 500), -500, 500, 0, w/3)+((w/3)/7.3)/2, (w/3)/7.3, (w/3)/7.3);
     
       }
     else if(sticksMode==1){
-       alphaG.ellipse(map(-int(row.getString(15).trim()), -500, 500, w/2-w/30-w/3, w/2-w/30-w/3+w/3), map(-int(row.getString(14).trim()), -500, 500, 0, w/3)+((w/3)/7.3)/2, (w/3)/7.3, (w/3)/7.3);
-      alphaG.ellipse(map(int(row.getString(13).trim()), -500, 500, w/2+w/30, w/2+w/30+w/3), map(-(int)map(int(row.getString(16).trim()), 1000, 2000, -500, 500), -500, 500, 0, w/3)+((w/3)/7.3)/2, (w/3)/7.3, (w/3)/7.3);
+       alphaG.ellipse(map(valyaw, -500, 500, w/2-w/30-w/3, w/2-w/30-w/3+w/3), map(-valpitch, -500, 500, 0, w/3)+((w/3)/7.3)/2, (w/3)/7.3, (w/3)/7.3);
+      alphaG.ellipse(map(valroll, -500, 500, w/2+w/30, w/2+w/30+w/3), map(-(int)map(int(row.getString(colthrottle).trim()), 1000, 2000, -500, 500), -500, 500, 0, w/3)+((w/3)/7.3)/2, (w/3)/7.3, (w/3)/7.3);
     }if (sticksMode==4) {
-      alphaG.ellipse(map(int(row.getString(13).trim()), -500, 500, w/2-w/30-w/3, w/2-w/30-w/3+w/3), map(-(int)map(int(row.getString(16).trim()), 1000, 2000, -500, 500), -500, 500, 0, w/3)+((w/3)/7.3)/2, (w/3)/7.3, (w/3)/7.3);
-      alphaG.ellipse(map(-int(row.getString(15).trim()), -500, 500, w/2+w/30, w/2+w/30+w/3), map(-int(row.getString(14).trim()), -500, 500, 0, w/3)+((w/3)/7.3)/2, (w/3)/7.3, (w/3)/7.3);
+      alphaG.ellipse(map(valroll, -500, 500, w/2-w/30-w/3, w/2-w/30-w/3+w/3), map(-(int)map(int(row.getString(colthrottle).trim()), 1000, 2000, -500, 500), -500, 500, 0, w/3)+((w/3)/7.3)/2, (w/3)/7.3, (w/3)/7.3);
+      alphaG.ellipse(map(valyaw, -500, 500, w/2+w/30, w/2+w/30+w/3), map(-valpitch, -500, 500, 0, w/3)+((w/3)/7.3)/2, (w/3)/7.3, (w/3)/7.3);
     }
     alphaG.endDraw();
     

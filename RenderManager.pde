@@ -53,7 +53,7 @@ class RenderManager extends Thread{
   void filterFiles(File[]f){
     int filenum =0;
     for(int i = 0; i< f.length;i++){
-      if(f[i].getName().contains(".BFL")||f[i].getName().contains(".bbl")){
+      if(f[i].getName().contains(".BFL")||f[i].getName().contains(".bbl")||f[i].getName().contains(".BBL")){
         filenum++;
       }
       else if(f[i].getName().contains(".TXT")){
@@ -68,7 +68,7 @@ class RenderManager extends Thread{
     files= new File[filenum];
     int index=0;
     for(int i = 0; i< f.length;i++){
-      if(f[i].getName().contains(".BFL")||f[i].getName().contains(".bbl")){
+      if(f[i].getName().contains(".BFL")||f[i].getName().contains(".bbl")||f[i].getName().contains(".BBL")){
         files[index]=f[i];
         index++;
       }

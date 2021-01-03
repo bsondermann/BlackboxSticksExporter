@@ -202,7 +202,7 @@ void dropEvent(DropEvent e){
       data.getChildren("data")[0].setContent(f.getAbsolutePath());
       saveXML(data,"assets/data.xml");
     }else{
-      if(f.getAbsolutePath().contains(".BFL")||f.getAbsolutePath().contains(".bbl")||f.getAbsolutePath().contains(".TXT")){
+      if(f.getAbsolutePath().contains(".BFL")||f.getAbsolutePath().contains(".bbl")||f.getAbsolutePath().contains(".TXT")||f.getAbsolutePath().contains(".BBL")){
         boolean contains = false;
         for(File fi : inputFiles){
           if(fi.getAbsolutePath().equals(f.getAbsolutePath())){
